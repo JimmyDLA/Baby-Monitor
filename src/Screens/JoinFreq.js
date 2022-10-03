@@ -1,8 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
-import {
-  View,
-  Text,
-} from 'react-native'
+import React, { useEffect } from 'react'
+import { View, Text } from 'react-native'
 
 const JoinFreq = () => {
   useEffect(() => {
@@ -29,12 +26,8 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'teal',
-    // width: '100%',
-    // height: 300,
   },
   container: {
-    // flex: 1,
-    // flexDirection: 'column',
     width: '100%',
     height: 300,
     backgroundColor: 'white',
