@@ -5,6 +5,6 @@ import { watchHome } from '../Sagas/Home.saga'
 import { watchFreq } from '../Sagas/Freq.saga'
 
 export function* rootSaga() {
-  yield all([watchFreq(), watchHome()])
+  yield all([fork(watchFreq), fork(watchHome)])
   // code after all-effect
 }
