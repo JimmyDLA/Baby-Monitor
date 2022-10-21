@@ -2,7 +2,9 @@ import { connect } from 'react-redux'
 import { startNewFrequency } from '../Reducers/frequency'
 import CreateFreq from './CreateFreq'
 // export default ExampleContainer
-const mapStateToProps = (state) => ({})
+const mapStateToProps = ({ frequency: { room } }) => ({
+  room,
+})
 
 const mapDispatchToProps = {
   startNewFrequency,

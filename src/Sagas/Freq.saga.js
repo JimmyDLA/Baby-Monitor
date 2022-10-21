@@ -6,6 +6,7 @@ import axios from 'axios'
 /**
  * The startup saga is the place to define behavior to execute when the application starts.
  */
+const URL = 'http://localhost:3000'
 
 export function* doSetNav(action) {
   try {
@@ -23,7 +24,10 @@ export function* doSetNav(action) {
 export function* doStartNewFreq() {
   try {
     console.log('doStartNewFreq')
+    debugger
+
     const { data } = yield calling(axios.get, URL)
+    debugger
     yield put(saveNewFreq(data))
   } catch (error) {
     console.warn(error)

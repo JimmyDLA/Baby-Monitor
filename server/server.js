@@ -15,16 +15,36 @@ app.get('/', (req, res) => {
 })
 
 // app.get('/:freq', (res, req) => {
-//   res.render('freq', { freqId: req.params.freq })
+//   res.render('freq', { freqID: req.params.freq })
 // })
+const rooms = {}
 
 io.on('connection', socket => {
-  console.log('connection!')
-  socket.on('join-freq', (freqId, userId) => {
-    console.log(freqId, userId)
-    socket.join(freqId)
+  console.log('socket connected!')
+
+  socket.on('join-freq', freqID => {
+    console.log(freqID)
+
+    if (rooms[freqID]) {
+      // Join exisiting room
+      rooms[freqID].push(socket.id)
+    } else {
+      // Create new rooom
+      rooms[freqID] = [socket.id]
+    }
+    /*
+        If both initiating and receiving peer joins the room,
+        we will get the other user details.
+        For initiating peer it would be receiving peer and vice versa.
+    */
+    console.log(rooms)
+    const otherUser = rooms[freqID].find(id => id !== socket.id)
+    if (otherUser) {
+      socket.emit('other-user', otherUser)
+      socket.to(otherUser).emit('user-joined', socket.id)
+    }
     // socket.emit('user', userId)
-    socket.to(freqId).emit('user-connected', userId)
+    // socket.to(freqID).emit('user-connected', userId)
   })
 })
 
