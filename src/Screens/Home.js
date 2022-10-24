@@ -5,7 +5,7 @@ import { useTheme } from '@/Hooks'
 
 const URL = 'http://localhost:3000'
 
-const Home = ({ setNav, setGame }) => {
+const Home = ({ setNav, setGame, saveNewFreq }) => {
   const { Common, Fonts, Gutters, Layout } = useTheme()
   const [freq, setFreq] = useState('')
   const [joinFreq, setJoinFreq] = useState('')
@@ -27,7 +27,8 @@ const Home = ({ setNav, setGame }) => {
   }
 
   const handleJoinFreq = () => {
-    setNav({ screen: 'JoinFreq' })
+    saveNewFreq(joinFreq)
+    setNav({ screen: 'JoinFreq', params: joinFreq })
   }
 
   const handleOnChange = e => {

@@ -21,20 +21,20 @@ export function* doSetNav(action) {
   }
 }
 
-export function* doStartNewFreq() {
-  try {
-    console.log('doStartNewFreq')
-    debugger
+// export function* doStartNewFreq() {
+//   try {
+//     console.log('doStartNewFreq')
+//     debugger
 
-    const { data } = yield calling(axios.get, URL)
-    debugger
-    yield put(saveNewFreq(data))
-  } catch (error) {
-    console.warn(error)
-  }
-}
+//     const { data } = yield calling(axios.get, URL)
+//     debugger
+//     yield put(saveNewFreq(data))
+//   } catch (error) {
+//     console.warn(error)
+//   }
+// }
 
 export function* watchFreq() {
   yield takeEvery(SET_NAV, doSetNav)
-  yield takeEvery(START_NEW_FREQ, doStartNewFreq)
+  // yield takeEvery(START_NEW_FREQ, doStartNewFreq)
 }

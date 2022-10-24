@@ -23,7 +23,7 @@ io.on('connection', socket => {
   console.log('socket connected!')
 
   socket.on('join-freq', freqID => {
-    console.log(freqID)
+    console.log({ freqID })
 
     if (rooms[freqID]) {
       // Join exisiting room
@@ -37,12 +37,31 @@ io.on('connection', socket => {
         we will get the other user details.
         For initiating peer it would be receiving peer and vice versa.
     */
+    const otherUserID = rooms[freqID].find(id => id !== socket.id)
     console.log(rooms)
-    const otherUser = rooms[freqID].find(id => id !== socket.id)
-    if (otherUser) {
-      socket.emit('other-user', otherUser)
-      socket.to(otherUser).emit('user-joined', socket.id)
+    console.log({ otherUserID })
+
+    if (otherUserID) {
+      socket.emit('other-user', otherUserID)
+      socket.to(otherUserID).emit('user-joined', socket.id)
     }
+    /*
+        The initiating peer offers a connection
+    */
+    socket.on('offer', payload => {
+      io.to(payload.target).emit('offer', payload)
+    })
+
+    /*
+        The receiving peer answers (accepts) the offer
+    */
+    socket.on('answer', payload => {
+      io.to(payload.target).emit('answer', payload)
+    })
+
+    socket.on('ice-candidate', incoming => {
+      io.to(incoming.target).emit('ice-candidate', incoming.candidate)
+    })
     // socket.emit('user', userId)
     // socket.to(freqID).emit('user-connected', userId)
   })
