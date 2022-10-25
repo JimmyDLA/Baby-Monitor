@@ -4,6 +4,7 @@ import {
   RTCPeerConnection,
   RTCSessionDescription,
   RTCIceCandidate,
+  RTCView,
 } from 'react-native-webrtc'
 import { View, Text, TextInput, TouchableOpacity } from 'react-native'
 import { useTheme } from '@/Hooks'
@@ -19,7 +20,9 @@ const JoinFreq = ({ room }) => {
   const otherUser = useRef()
   const sendChannel = useRef() // Data channel
 
+  const [remoteMediaStream, setRemoteMediaStream] = useState(null)
   const [msg, setMsg] = useState('')
+
   useEffect(() => {
     console.log('JoinFreq useEffect')
     socketRef.current = io.connect(URL)
@@ -39,18 +42,22 @@ const JoinFreq = ({ room }) => {
     socketRef.current.on('answer', handleAnswer)
 
     socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
+
   }, [])
 
   function callUser(userID) {
     // This will initiate the call for the receiving peer
-    console.log('[INFO] Initiated a call')
+    console.log('[INFO] JoinFreq Initiated a call')
     peerRef.current = Peer(userID)
-    debugger
+    // debugger
 
     sendChannel.current = peerRef.current.createDataChannel('sendChannel')
 
     // listen to incoming messages from other peer
     sendChannel.current.onmessage = handleReceiveMessage
+    // peerRef.current.addEventListener('addstream', e => {
+    //   setRemoteMediaStream(e.stream)
+    // })
   }
 
   function Peer(userID) {
@@ -58,12 +65,10 @@ const JoinFreq = ({ room }) => {
       Here we are using Turn and Stun server
       (ref: https://blog.ivrpowers.com/post/technologies/what-is-stun-turn-server/)
     */
-    debugger
     const peer = new RTCPeerConnection({
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
     })
-    debugger
-    console.log({ peer })
+    // console.log({ peer })
 
     peer.onicecandidate = handleICECandidateEvent
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID)
@@ -72,7 +77,6 @@ const JoinFreq = ({ room }) => {
 
   function handleNegotiationNeededEvent(userID) {
     // Offer made by the initiating peer to the receiving peer.
-    debugger
     peerRef.current
       .createOffer()
       .then(offer => {
@@ -94,7 +98,7 @@ const JoinFreq = ({ room }) => {
       Here we are exchanging config information
       between the peers to establish communication
     */
-    console.log('[INFO] Handling Offer')
+    console.log('[INFO] JoinFreq Handling Offer')
     peerRef.current = Peer()
     peerRef.current.ondatachannel = event => {
       sendChannel.current = event.channel
@@ -129,14 +133,21 @@ const JoinFreq = ({ room }) => {
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         }
+        peerRef.current.addEventListener('addstream', event => {
+          // Grab the remote stream from the connected participant.
+          setRemoteMediaStream(event.stream)
+        })
         socketRef.current.emit('answer', payload)
       })
   }
 
   function handleAnswer(message) {
     // Handle answer by the receiving peer
-    console.log('[INFO] Handling Answer, Message:', message)
+    console.log('[INFO] JoinFreq Handling Answer, Message:', message)
     const desc = new RTCSessionDescription(message.sdp)
+    // peerRef.current.addEventListener('addstream', e => {
+    //   setRemoteMediaStream(e.stream)
+    // })
     peerRef.current
       .setRemoteDescription(desc)
       .catch(e => console.log('Error handle answer', e))
@@ -144,16 +155,8 @@ const JoinFreq = ({ room }) => {
 
   function handleReceiveMessage(e) {
     // Listener for receiving messages from the peer
-    console.log('[INFO] Message received from peer', e.data)
-    // const msg = [{
-    //   _id: Math.random(1000).toString(),
-    //   text: e.data,
-    //   createdAt: new Date(),
-    //   user: {
-    //     _id: 2,
-    //   },
-    // }]
-    // setMessages(previousMessages => GiftedChat.append(previousMessages, msg))
+    console.log('[INFO] JoinFreq Message received from peer', e.data)
+    // setRemoteMediaStream(e.data)
   }
 
   function handleICECandidateEvent(e) {
@@ -164,7 +167,7 @@ const JoinFreq = ({ room }) => {
       ICE candidates and then decide which to choose best among possible
       candidates
     */
-    console.log('[INFO] Handling ICE Candidate Event')
+    console.log('[INFO] JoinFreq Handling ICE Candidate Event')
 
     if (e.candidate) {
       const payload = {
@@ -176,7 +179,7 @@ const JoinFreq = ({ room }) => {
   }
 
   function handleNewICECandidateMsg(incoming) {
-    console.log('[INFO] Handling New ICE Candidate Msg')
+    console.log('[INFO] JoinFreq Handling New ICE Candidate Msg')
     const candidate = new RTCIceCandidate(incoming)
 
     peerRef.current.addIceCandidate(candidate).catch(e => console.log(e))
@@ -204,11 +207,30 @@ const JoinFreq = ({ room }) => {
       >
         <Text style={Fonts.textRegular}>Send</Text>
       </TouchableOpacity>
+      {remoteMediaStream && (
+        <View style={styles.rtcContainer}>
+          <RTCView
+            style={styles.rtcView}
+            mirror={true}
+            objectFit={'cover'}
+            streamURL={remoteMediaStream.toURL()}
+            zOrder={1}
+          />
+        </View>
+      )}
     </View>
   )
 }
 
 const styles = {
+  rtcContainer: {
+    width: '100%',
+    height: 300,
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: 'pink',
+  },
+  rtcView: { width: '100%', height: '100%' },
   input: {
     width: 200,
     height: 30,

@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Text, TextInput, TouchableOpacity, ScrollView } from 'react-native'
-import axios from 'axios'
 import { useTheme } from '@/Hooks'
-
-const URL = 'http://localhost:3000'
 
 const Home = ({ setNav, setGame, saveNewFreq }) => {
   const { Common, Fonts, Gutters, Layout } = useTheme()
@@ -13,14 +10,6 @@ const Home = ({ setNav, setGame, saveNewFreq }) => {
   useEffect(() => {
     console.log('useEffect')
   }, [])
-
-  const getUuid = () => {
-    axios({ method: 'get', url: URL })
-      .then(response => {
-        setFreq(response.data)
-      })
-      .catch(err => console.log(err))
-  }
 
   const handleCreateFreq = () => {
     setGame(true)

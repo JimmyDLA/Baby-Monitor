@@ -4,13 +4,22 @@ import {
   RTCPeerConnection,
   RTCSessionDescription,
   RTCIceCandidate,
+  RTCView,
+  mediaDevices,
 } from 'react-native-webrtc'
 import io from 'socket.io-client'
 import 'react-native-get-random-values'
 import { v4 as uuidV4 } from 'uuid'
 
-const URL = 'http://localhost:3000'
+const URL = 'http://192.168.86.87:3000'
 const room = uuidV4()
+const mediaConstraints = {
+  audio: true,
+  video: {
+    frameRate: 30,
+    facingMode: 'user',
+  },
+}
 
 const CreateFreq = ({ startNewFrequency }) => {
   const peerRef = useRef()
@@ -19,17 +28,21 @@ const CreateFreq = ({ startNewFrequency }) => {
   const sendChannel = useRef() // Data channel
 
   const [serverMsg, setServerMsg] = useState('')
+  const [localMediaStream, setLocalMediaStream] = useState(null)
+
   useEffect(() => {
-    console.log('create freq useEffect', room)
+    console.log('create freq OnMount useEffect - room:', room)
     socketRef.current = io.connect(URL)
     startNewFrequency()
-    // console.log({ room })
+    handleGetMedia()
+
     socketRef.current.emit('join-freq', room) // Room ID
 
     socketRef.current.on('other-user', userID => {
       console.log('other-user: ', userID)
       callUser(userID)
       otherUser.current = userID
+      peerRef.current.addStream(localMediaStream)
     })
     // Signals that both peers have joined the room
     socketRef.current.on('user-joined', userID => {
@@ -43,9 +56,34 @@ const CreateFreq = ({ startNewFrequency }) => {
     socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
   }, [])
 
+  // useEffect(() => {
+  //   if (localMediaStream !== null) {
+  //     console.log('local media steam updated useEffet', localMediaStream)
+  //     peerRef.current.addStream(localMediaStream)
+  //   }
+  // }, [localMediaStream])
+
+  const handleGetMedia = async () => {
+    let isVoiceOnly = false
+
+    try {
+      const mediaStream = await mediaDevices.getUserMedia(mediaConstraints)
+
+      if (isVoiceOnly) {
+        let videoTrack = await mediaStream.getVideoTracks()[0]
+        videoTrack.enabled = false
+      }
+
+      setLocalMediaStream(mediaStream)
+    } catch (err) {
+      // Handle Error
+      console.log({ err })
+    }
+  }
+
   function callUser(userID) {
     // This will initiate the call for the receiving peer
-    console.log('[INFO] Initiated a call')
+    console.log('[INFO] createFreq Initiated a call')
     peerRef.current = Peer(userID)
     sendChannel.current = peerRef.current.createDataChannel('sendChannel')
 
@@ -90,12 +128,13 @@ const CreateFreq = ({ startNewFrequency }) => {
       Here we are exchanging config information
       between the peers to establish communication
     */
-    console.log('[INFO] Handling Offer')
+    console.log('[INFO] createFreq Handling Offer')
     peerRef.current = Peer()
     peerRef.current.ondatachannel = event => {
       sendChannel.current = event.channel
       sendChannel.current.onmessage = handleReceiveMessage
       console.log('[SUCCESS] Connection established')
+      // sendChannel.current.send(localMediaStream)
     }
 
     /*
@@ -131,7 +170,7 @@ const CreateFreq = ({ startNewFrequency }) => {
 
   function handleAnswer(message) {
     // Handle answer by the receiving peer
-    console.log('[INFO] Handling Answer, Message:', message)
+    console.log('[INFO] createFreq Handling Answer, Message:', message)
     const desc = new RTCSessionDescription(message.sdp)
     peerRef.current
       .setRemoteDescription(desc)
@@ -140,21 +179,12 @@ const CreateFreq = ({ startNewFrequency }) => {
 
   function handleReceiveMessage(e) {
     // Listener for receiving messages from the peer
-    console.log('[INFO] Message received from peer', e.data)
+    console.log('[INFO] createFreq Message received from peer', e.data)
     setServerMsg(e.data)
-    // const msg = [{
-    //   _id: Math.random(1000).toString(),
-    //   text: e.data,
-    //   createdAt: new Date(),
-    //   user: {
-    //     _id: 2,
-    //   },
-    // }]
-    // setMessages(previousMessages => GiftedChat.append(previousMessages, msg))
   }
 
   function handleICECandidateEvent(e) {
-    console.log('[INFO] Handling ICE Candidate Event')
+    console.log('[INFO] createFreq Handling ICE Candidate Event')
 
     /*
       ICE stands for Interactive Connectivity Establishment. Using this
@@ -173,7 +203,7 @@ const CreateFreq = ({ startNewFrequency }) => {
   }
 
   function handleNewICECandidateMsg(incoming) {
-    console.log('[INFO] Handling New ICE Candidate Msg')
+    console.log('[INFO] createFreq Handling New ICE Candidate Msg')
 
     const candidate = new RTCIceCandidate(incoming)
 
@@ -184,11 +214,30 @@ const CreateFreq = ({ startNewFrequency }) => {
     <View style={styles.preview}>
       <Text>CREATE FREQUENCY</Text>
       <Text>Incoming: {serverMsg}</Text>
+      {localMediaStream && (
+        <View style={styles.rtcContainer}>
+          <RTCView
+            style={styles.rtcView}
+            mirror={true}
+            objectFit={'cover'}
+            streamURL={localMediaStream.toURL()}
+            zOrder={1}
+          />
+        </View>
+      )}
     </View>
   )
 }
 
 const styles = {
+  rtcContainer: {
+    width: '100%',
+    height: 300,
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: 'pink',
+  },
+  rtcView: { width: '100%', height: '100%' },
   input: {
     width: 200,
     height: 30,
