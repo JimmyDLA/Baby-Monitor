@@ -34,7 +34,7 @@ const CreateFreq = ({ startNewFrequency }) => {
     console.log('create freq OnMount useEffect - room:', room)
     socketRef.current = io.connect(URL)
     startNewFrequency()
-    handleGetMedia()
+    getMedia()
 
     socketRef.current.emit('join-freq', room) // Room ID
 
@@ -42,7 +42,7 @@ const CreateFreq = ({ startNewFrequency }) => {
       console.log('other-user: ', userID)
       callUser(userID)
       otherUser.current = userID
-      peerRef.current.addStream(localMediaStream)
+      // peerRef.current.addStream(localMediaStream)
     })
     // Signals that both peers have joined the room
     socketRef.current.on('user-joined', userID => {
@@ -63,7 +63,7 @@ const CreateFreq = ({ startNewFrequency }) => {
   //   }
   // }, [localMediaStream])
 
-  const handleGetMedia = async () => {
+  const getMedia = async () => {
     let isVoiceOnly = false
 
     try {
@@ -75,6 +75,7 @@ const CreateFreq = ({ startNewFrequency }) => {
       }
 
       setLocalMediaStream(mediaStream)
+      return mediaStream
     } catch (err) {
       // Handle Error
       console.log({ err })
@@ -101,14 +102,23 @@ const CreateFreq = ({ startNewFrequency }) => {
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
     })
     peer.onicecandidate = handleICECandidateEvent
+    peer.ontrack = handleTrackEvnet
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID)
     return peer
   }
 
   function handleNegotiationNeededEvent(userID) {
     // Offer made by the initiating peer to the receiving peer.
+    let sessionConstraints = {
+      mandatory: {
+        OfferToReceiveAudio: true,
+        OfferToReceiveVideo: true,
+        VoiceActivityDetection: true,
+      },
+    }
+
     peerRef.current
-      .createOffer()
+      .createOffer(sessionConstraints)
       .then(offer => {
         return peerRef.current.setLocalDescription(offer)
       })
@@ -123,18 +133,39 @@ const CreateFreq = ({ startNewFrequency }) => {
       .catch(err => console.log('Error handling negotiation needed event', err))
   }
 
+  async function sendVideo() {
+    console.log({ localMediaStream })
+    const newMedia = await getMedia()
+    console.log('========================> ', peerRef.current.addStream)
+
+    peerRef.current.addStream(newMedia)
+  }
+
   function handleOffer(incoming) {
     /*
       Here we are exchanging config information
       between the peers to establish communication
     */
+    let sessionConstraints = {
+      mandatory: {
+        OfferToReceiveAudio: true,
+        OfferToReceiveVideo: true,
+        VoiceActivityDetection: true,
+      },
+    }
+
     console.log('[INFO] createFreq Handling Offer')
     peerRef.current = Peer()
     peerRef.current.ondatachannel = event => {
       sendChannel.current = event.channel
       sendChannel.current.onmessage = handleReceiveMessage
-      console.log('[SUCCESS] Connection established')
+      console.log('[SUCCESS] createFreq Connection established')
+      sendVideo()
       // sendChannel.current.send(localMediaStream)
+    }
+
+    peerRef.current.onaddstream = event => {
+      console.log('=====================================================> EVENT!', event)
     }
 
     /*
@@ -142,7 +173,7 @@ const CreateFreq = ({ startNewFrequency }) => {
       SDP stands for Session Description Protocol. The exchange
       of config information between the peers happens using this protocol
     */
-    const desc = new RTCSessionDescription(incoming.sdp)
+    const desc = new RTCSessionDescription(sessionConstraints)
 
     /*
       Remote Description : Information about the other peer
@@ -202,6 +233,10 @@ const CreateFreq = ({ startNewFrequency }) => {
     }
   }
 
+  function handleTrackEvnet(e) {
+    console.log('[INFO] createFreq Track received from peer', e)
+  }
+
   function handleNewICECandidateMsg(incoming) {
     console.log('[INFO] createFreq Handling New ICE Candidate Msg')
 
@@ -209,7 +244,7 @@ const CreateFreq = ({ startNewFrequency }) => {
 
     peerRef.current.addIceCandidate(candidate).catch(e => console.log(e))
   }
-
+  console.log({ localMediaStream })
   return (
     <View style={styles.preview}>
       <Text>CREATE FREQUENCY</Text>

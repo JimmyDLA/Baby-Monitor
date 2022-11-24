@@ -23,7 +23,7 @@ io.on('connection', socket => {
   console.log('socket connected!')
 
   socket.on('join-freq', freqID => {
-    console.log({ freqID })
+    console.log('join-freq', { freqID })
 
     if (rooms[freqID]) {
       // Join exisiting room

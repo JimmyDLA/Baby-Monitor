@@ -71,14 +71,22 @@ const JoinFreq = ({ room }) => {
     // console.log({ peer })
 
     peer.onicecandidate = handleICECandidateEvent
+    peer.ontrack = handleTrackEvnet
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID)
     return peer
   }
 
   function handleNegotiationNeededEvent(userID) {
     // Offer made by the initiating peer to the receiving peer.
+    let sessionConstraints = {
+      mandatory: {
+        OfferToReceiveAudio: true,
+        OfferToReceiveVideo: true,
+        VoiceActivityDetection: true,
+      },
+    }
     peerRef.current
-      .createOffer()
+      .createOffer(sessionConstraints)
       .then(offer => {
         return peerRef.current.setLocalDescription(offer)
       })
@@ -103,7 +111,10 @@ const JoinFreq = ({ room }) => {
     peerRef.current.ondatachannel = event => {
       sendChannel.current = event.channel
       sendChannel.current.onmessage = handleReceiveMessage
-      console.log('[SUCCESS] Connection established')
+      console.log('[SUCCESS] JoinFreq Connection established')
+    }
+    peerRef.current.onaddstream = event => {
+      console.log('=====================================================> EVENT!', event)
     }
 
     /*
@@ -135,6 +146,7 @@ const JoinFreq = ({ room }) => {
         }
         peerRef.current.addEventListener('addstream', event => {
           // Grab the remote stream from the connected participant.
+          console.log('=====================================================> EVENT!',)
           setRemoteMediaStream(event.stream)
         })
         socketRef.current.emit('answer', payload)
@@ -183,6 +195,10 @@ const JoinFreq = ({ room }) => {
     const candidate = new RTCIceCandidate(incoming)
 
     peerRef.current.addIceCandidate(candidate).catch(e => console.log(e))
+  }
+
+  function handleTrackEvnet(e) {
+    console.log('[INFO] JoinFreq Track received from peer', e)
   }
 
   const handleOnChange = e => {
