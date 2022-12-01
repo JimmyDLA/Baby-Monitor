@@ -26,54 +26,68 @@ const JoinFreq = ({ room }) => {
   useEffect(() => {
     console.log('JoinFreq useEffect')
     socketRef.current = io.connect(URL)
+    // ====================== 1. Emit joining roomID to server ======================
     socketRef.current.emit('join-freq', room)
-    // Step 3: Waiting for the other peer to join the room
+
+    // ====================== 4. Add Listener for server if there is another user in room ======================
     socketRef.current.on('other-user', userID => {
+      console.log('[INFO] JoinFreq other-user', { userID })
+      // ====================== 5. Call this other user with userID ======================
       callUser(userID)
       otherUser.current = userID
     })
     // Signals that both peers have joined the room
     socketRef.current.on('user-joined', userID => {
+      console.log('[INFO] JoinFreq user-joined', { userID })
+
       otherUser.current = userID
     })
 
     socketRef.current.on('offer', handleOffer)
 
+    // ====================== 19. Add Listener for incoming answer ======================
     socketRef.current.on('answer', handleAnswer)
-
+    // ====================== 25. Add Listener for incoming ice-candidate ======================
     socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
-
   }, [])
 
   function callUser(userID) {
-    // This will initiate the call for the receiving peer
+    // ====================== 6. Initiated a call with Peer() & add peerRef ======================
     console.log('[INFO] JoinFreq Initiated a call')
     peerRef.current = Peer(userID)
-    // debugger
 
     sendChannel.current = peerRef.current.createDataChannel('sendChannel')
 
     // listen to incoming messages from other peer
     sendChannel.current.onmessage = handleReceiveMessage
-    // peerRef.current.addEventListener('addstream', e => {
-    //   setRemoteMediaStream(e.stream)
-    // })
   }
 
   function Peer(userID) {
+    console.log('[INFO] JoinFreq Peer')
     /*
       Here we are using Turn and Stun server
       (ref: https://blog.ivrpowers.com/post/technologies/what-is-stun-turn-server/)
     */
+    // ====================== 7. Start RTCPeerConnection  ======================
     const peer = new RTCPeerConnection({
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
     })
-    // console.log({ peer })
 
-    peer.onicecandidate = handleICECandidateEvent
+    // peer.onicecandidate = handleICECandidateEvent
+    // peer.onaddstream = event => {
+    //   console.log('[INFO] JoinFreq onaddstream')
+    //   setRemoteMediaStream(event.stream)
+    // }
     peer.ontrack = handleTrackEvnet
+    // ====================== 8. Add Listener for hand shake to handle Negotiation need  ======================
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID)
+    peer.onaddstream = event => handleAddStream(event)
     return peer
+  }
+
+  function handleAddStream(event) {
+    console.log('[INFO] JoinFreq onaddstream', { event })
+    setRemoteMediaStream(event.stream)
   }
 
   function handleNegotiationNeededEvent(userID) {
@@ -88,14 +102,17 @@ const JoinFreq = ({ room }) => {
     peerRef.current
       .createOffer(sessionConstraints)
       .then(offer => {
+        // ====================== 9. Create offer & setLocalDescription with offer ======================
         return peerRef.current.setLocalDescription(offer)
       })
       .then(() => {
+        console.log('[INFO] JoinFreq handleNegotiationNeededEvent')
         const payload = {
           target: userID,
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         }
+        // ====================== 10. Emit offer to Server ======================
         socketRef.current.emit('offer', payload)
       })
       .catch(err => console.log('Error handling negotiation needed event', err))
@@ -113,9 +130,9 @@ const JoinFreq = ({ room }) => {
       sendChannel.current.onmessage = handleReceiveMessage
       console.log('[SUCCESS] JoinFreq Connection established')
     }
-    peerRef.current.onaddstream = event => {
-      console.log('=====================================================> EVENT!', event)
-    }
+    // peerRef.current.onaddstream = event => {
+    //   console.log('=================================================================================================> EVENT!', event)
+    // }
 
     /*
       Session Description: It is the config information of the peer
@@ -139,27 +156,31 @@ const JoinFreq = ({ room }) => {
         return peerRef.current.setLocalDescription(answer)
       })
       .then(() => {
+        console.log('[INFO] JoinFreq handleOffer answer,')
+
         const payload = {
           target: incoming.caller,
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         }
-        peerRef.current.addEventListener('addstream', event => {
-          // Grab the remote stream from the connected participant.
-          console.log('=====================================================> EVENT!',)
-          setRemoteMediaStream(event.stream)
-        })
+        // peerRef.current.addEventListener('addstream', event => {
+        //   // Grab the remote stream from the connected participant.
+        //   console.log('=================================================================================================> EVENT!',)
+        //   setRemoteMediaStream(event.stream)
+        // })
         socketRef.current.emit('answer', payload)
       })
   }
 
   function handleAnswer(message) {
     // Handle answer by the receiving peer
-    console.log('[INFO] JoinFreq Handling Answer, Message:', message)
+    console.log('[INFO] JoinFreq handleAnswer.')
     const desc = new RTCSessionDescription(message.sdp)
     // peerRef.current.addEventListener('addstream', e => {
     //   setRemoteMediaStream(e.stream)
     // })
+    // =========== 20. Set remote descp and possibly emitting ice candidate event ============
+
     peerRef.current
       .setRemoteDescription(desc)
       .catch(e => console.log('Error handle answer', e))
@@ -191,8 +212,9 @@ const JoinFreq = ({ room }) => {
   }
 
   function handleNewICECandidateMsg(incoming) {
-    console.log('[INFO] JoinFreq Handling New ICE Candidate Msg')
-    const candidate = new RTCIceCandidate(incoming)
+    // =========== 26. create & set ice candidate to peer  ============
+    console.log('[INFO] JoinFreq handleNewICECandidateMsg')
+    const candidate = new RTCIceCandidate(incoming.candidate)
 
     peerRef.current.addIceCandidate(candidate).catch(e => console.log(e))
   }
@@ -242,7 +264,7 @@ const styles = {
   rtcContainer: {
     width: '100%',
     height: 300,
-    flex: 1,
+    // flex: 1,
     alignItems: 'center',
     backgroundColor: 'pink',
   },

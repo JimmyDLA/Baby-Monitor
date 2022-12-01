@@ -11,7 +11,7 @@ import io from 'socket.io-client'
 import 'react-native-get-random-values'
 import { v4 as uuidV4 } from 'uuid'
 
-const URL = 'http://192.168.86.87:3000'
+const URL = 'http://192.168.86.89:3000'
 const room = uuidV4()
 const mediaConstraints = {
   audio: true,
@@ -34,21 +34,23 @@ const CreateFreq = ({ startNewFrequency }) => {
     console.log('create freq OnMount useEffect - room:', room)
     socketRef.current = io.connect(URL)
     startNewFrequency()
-    getMedia()
+    // getMedia()
 
     socketRef.current.emit('join-freq', room) // Room ID
 
     socketRef.current.on('other-user', userID => {
-      console.log('other-user: ', userID)
-      callUser(userID)
+      console.log('[INFO] createFreq other-user: ', userID)
+      // callUser(userID)
       otherUser.current = userID
       // peerRef.current.addStream(localMediaStream)
     })
     // Signals that both peers have joined the room
     socketRef.current.on('user-joined', userID => {
+      console.log('[INFO] createFreq user-joined: ', userID)
       otherUser.current = userID
+      // callUser(userID)
     })
-
+    // ====================== 13. Add listener for icoming offers ======================
     socketRef.current.on('offer', handleOffer)
 
     socketRef.current.on('answer', handleAnswer)
@@ -101,6 +103,7 @@ const CreateFreq = ({ startNewFrequency }) => {
     const peer = new RTCPeerConnection({
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
     })
+    // =========== 21. Add listener on ice candidate once done setting all descps ============
     peer.onicecandidate = handleICECandidateEvent
     peer.ontrack = handleTrackEvnet
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID)
@@ -108,6 +111,7 @@ const CreateFreq = ({ startNewFrequency }) => {
   }
 
   function handleNegotiationNeededEvent(userID) {
+    // console.log('[INFO] createFreq handleNegotiationNeededEvent')
     // Offer made by the initiating peer to the receiving peer.
     let sessionConstraints = {
       mandatory: {
@@ -124,10 +128,11 @@ const CreateFreq = ({ startNewFrequency }) => {
       })
       .then(() => {
         const payload = {
-          target: userID,
+          target: otherUser.current,
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         }
+        console.log('[INFO] createFreq handleNegotiationNeededEvent', { payload })
         socketRef.current.emit('offer', payload)
       })
       .catch(err => console.log('Error handling negotiation needed event', err))
@@ -141,11 +146,14 @@ const CreateFreq = ({ startNewFrequency }) => {
     peerRef.current.addStream(newMedia)
   }
 
-  function handleOffer(incoming) {
+  async function handleOffer(incoming) {
     /*
       Here we are exchanging config information
       between the peers to establish communication
     */
+
+    // ====================== 14. Handle offer ======================
+
     let sessionConstraints = {
       mandatory: {
         OfferToReceiveAudio: true,
@@ -153,32 +161,39 @@ const CreateFreq = ({ startNewFrequency }) => {
         VoiceActivityDetection: true,
       },
     }
+    const media = await getMedia()
 
-    console.log('[INFO] createFreq Handling Offer')
     peerRef.current = Peer()
+    peerRef.current.onsignalingstatechange = event => {
+      console.log('[STAT] createFreq signal', peerRef.current.signalingState)
+    }
     peerRef.current.ondatachannel = event => {
       sendChannel.current = event.channel
       sendChannel.current.onmessage = handleReceiveMessage
-      console.log('[SUCCESS] createFreq Connection established')
-      sendVideo()
+      console.log('[SUCCESS] createFreq Connection established', media.toURL())
+
+      peerRef.current.addStream(media)
+      // sendVideo()
       // sendChannel.current.send(localMediaStream)
     }
 
-    peerRef.current.onaddstream = event => {
-      console.log('=====================================================> EVENT!', event)
-    }
+
+    // peerRef.current.onaddstream = event => {
+    //   console.log('=====================================================> EVENT!', event)
+    // }
 
     /*
       Session Description: It is the config information of the peer
       SDP stands for Session Description Protocol. The exchange
       of config information between the peers happens using this protocol
     */
-    const desc = new RTCSessionDescription(sessionConstraints)
+    const desc = new RTCSessionDescription(incoming.sdp)
 
     /*
       Remote Description : Information about the other peer
       Local Description: Information about you 'current peer'
     */
+    // ====================== 15. Answer, save remote & local descp ======================
 
     peerRef.current
       .setRemoteDescription(desc)
@@ -190,18 +205,21 @@ const CreateFreq = ({ startNewFrequency }) => {
         return peerRef.current.setLocalDescription(answer)
       })
       .then(() => {
+        console.log('[INFO] createFreq handleOffer')
         const payload = {
           target: incoming.caller,
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         }
+        // ====================== 16. Emit answer payload to server ======================
         socketRef.current.emit('answer', payload)
       })
+      .catch(e => console.log('[ERROR] ', e))
   }
 
   function handleAnswer(message) {
     // Handle answer by the receiving peer
-    console.log('[INFO] createFreq Handling Answer, Message:', message)
+    console.log('[INFO] createFreq Handling Answer', message)
     const desc = new RTCSessionDescription(message.sdp)
     peerRef.current
       .setRemoteDescription(desc)
@@ -215,7 +233,7 @@ const CreateFreq = ({ startNewFrequency }) => {
   }
 
   function handleICECandidateEvent(e) {
-    console.log('[INFO] createFreq Handling ICE Candidate Event')
+    console.log('[INFO] createFreq handleICECandidateEvent')
 
     /*
       ICE stands for Interactive Connectivity Establishment. Using this
@@ -228,7 +246,9 @@ const CreateFreq = ({ startNewFrequency }) => {
       const payload = {
         target: otherUser.current,
         candidate: e.candidate,
+        origin: socketRef.current.id,
       }
+      // =========== 22. Emit to server ice candidate ============
       socketRef.current.emit('ice-candidate', payload)
     }
   }
@@ -244,7 +264,7 @@ const CreateFreq = ({ startNewFrequency }) => {
 
     peerRef.current.addIceCandidate(candidate).catch(e => console.log(e))
   }
-  console.log({ localMediaStream })
+
   return (
     <View style={styles.preview}>
       <Text>CREATE FREQUENCY</Text>
@@ -268,7 +288,7 @@ const styles = {
   rtcContainer: {
     width: '100%',
     height: 300,
-    flex: 1,
+    // flex: 1,
     alignItems: 'center',
     backgroundColor: 'pink',
   },
@@ -284,7 +304,7 @@ const styles = {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: 'pink',
+    backgroundColor: 'white',
   },
   container: {
     width: '100%',
