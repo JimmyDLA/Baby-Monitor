@@ -34,7 +34,6 @@ const CreateFreq = ({ startNewFrequency }) => {
     console.log('create freq OnMount useEffect - room:', room)
     socketRef.current = io.connect(URL)
     startNewFrequency()
-    // getMedia()
 
     socketRef.current.emit('join-freq', room) // Room ID
 
@@ -95,6 +94,8 @@ const CreateFreq = ({ startNewFrequency }) => {
   }
 
   function Peer(userID) {
+    console.log('[INFO] createFreq Peer')
+
     /*
       Here we are using Turn and Stun server
       (ref: https://blog.ivrpowers.com/post/technologies/what-is-stun-turn-server/)
@@ -106,7 +107,19 @@ const CreateFreq = ({ startNewFrequency }) => {
     // =========== 21. Add listener on ice candidate once done setting all descps ============
     peer.onicecandidate = handleICECandidateEvent
     peer.ontrack = handleTrackEvnet
-    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID)
+    // peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID)
+    peer.onsignalingstatechange = event => {
+      console.log('[STAT] createFreq signal', peerRef.current.signalingState)
+    }
+    peer.ondatachannel = async event => {
+      sendChannel.current = event.channel
+      sendChannel.current.onmessage = handleReceiveMessage
+      console.log('[SUCCESS] createFreq Connection established')
+
+      // peer.addStream(media)
+      // sendVideo()
+      // sendChannel.current.send(localMediaStream)
+    }
     return peer
   }
 
@@ -121,8 +134,8 @@ const CreateFreq = ({ startNewFrequency }) => {
       },
     }
 
-    peerRef.current
-      .createOffer(sessionConstraints)
+    // eslint-disable-next-line prettier/prettier
+    peerRef.current.createOffer(sessionConstraints)
       .then(offer => {
         return peerRef.current.setLocalDescription(offer)
       })
@@ -132,27 +145,18 @@ const CreateFreq = ({ startNewFrequency }) => {
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         }
-        console.log('[INFO] createFreq handleNegotiationNeededEvent', { payload })
+        console.log('[INFO] createFreq handleNegotiationNeededEvent')
         socketRef.current.emit('offer', payload)
       })
       .catch(err => console.log('Error handling negotiation needed event', err))
   }
 
-  async function sendVideo() {
-    console.log({ localMediaStream })
-    const newMedia = await getMedia()
-    console.log('========================> ', peerRef.current.addStream)
-
-    peerRef.current.addStream(newMedia)
-  }
-
   async function handleOffer(incoming) {
+    // ====================== 14. Handle offer ======================
     /*
       Here we are exchanging config information
       between the peers to establish communication
     */
-
-    // ====================== 14. Handle offer ======================
 
     let sessionConstraints = {
       mandatory: {
@@ -161,22 +165,20 @@ const CreateFreq = ({ startNewFrequency }) => {
         VoiceActivityDetection: true,
       },
     }
-    const media = await getMedia()
 
     peerRef.current = Peer()
-    peerRef.current.onsignalingstatechange = event => {
-      console.log('[STAT] createFreq signal', peerRef.current.signalingState)
-    }
-    peerRef.current.ondatachannel = event => {
-      sendChannel.current = event.channel
-      sendChannel.current.onmessage = handleReceiveMessage
-      console.log('[SUCCESS] createFreq Connection established', media.toURL())
+    // peerRef.current.onsignalingstatechange = event => {
+    //   console.log('[STAT] createFreq signal', peerRef.current.signalingState)
+    // }
+    // peerRef.current.ondatachannel = event => {
+    //   sendChannel.current = event.channel
+    //   sendChannel.current.onmessage = handleReceiveMessage
+    //   console.log('[SUCCESS] createFreq Connection established', media.toURL())
 
-      peerRef.current.addStream(media)
-      // sendVideo()
-      // sendChannel.current.send(localMediaStream)
-    }
-
+    //   peerRef.current.addStream(media)
+    //   // sendVideo()
+    //   // sendChannel.current.send(localMediaStream)
+    // }
 
     // peerRef.current.onaddstream = event => {
     //   console.log('=====================================================> EVENT!', event)
@@ -188,6 +190,8 @@ const CreateFreq = ({ startNewFrequency }) => {
       of config information between the peers happens using this protocol
     */
     const desc = new RTCSessionDescription(incoming.sdp)
+    const media = await getMedia()
+
 
     /*
       Remote Description : Information about the other peer
@@ -195,9 +199,11 @@ const CreateFreq = ({ startNewFrequency }) => {
     */
     // ====================== 15. Answer, save remote & local descp ======================
 
-    peerRef.current
-      .setRemoteDescription(desc)
-      .then(() => { })
+    // eslint-disable-next-line prettier/prettier
+    peerRef.current.setRemoteDescription(desc)
+      .then(() => {
+        peerRef.current.addStream(media)
+      })
       .then(() => {
         return peerRef.current.createAnswer()
       })
@@ -254,11 +260,11 @@ const CreateFreq = ({ startNewFrequency }) => {
   }
 
   function handleTrackEvnet(e) {
-    console.log('[INFO] createFreq Track received from peer', e)
+    console.log('[INFO] createFreq handleTrackEvnet', e)
   }
 
   function handleNewICECandidateMsg(incoming) {
-    console.log('[INFO] createFreq Handling New ICE Candidate Msg')
+    console.log('[INFO] createFreq handleNewICECandidateMsg')
 
     const candidate = new RTCIceCandidate(incoming)
 

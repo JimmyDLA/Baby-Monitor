@@ -5,11 +5,20 @@ import {
   RTCSessionDescription,
   RTCIceCandidate,
   RTCView,
+  mediaDevices,
 } from 'react-native-webrtc'
 import { View, Text, TextInput, TouchableOpacity } from 'react-native'
 import { useTheme } from '@/Hooks'
 
-const URL = 'http://localhost:3000'
+const URL = 'http://192.168.86.89:3000'
+
+const mediaConstraints = {
+  audio: true,
+  video: {
+    frameRate: 30,
+    facingMode: 'user',
+  },
+}
 
 const JoinFreq = ({ room }) => {
   const { Common, Fonts, Gutters } = useTheme()
@@ -55,12 +64,32 @@ const JoinFreq = ({ room }) => {
     // ====================== 6. Initiated a call with Peer() & add peerRef ======================
     console.log('[INFO] JoinFreq Initiated a call')
     peerRef.current = Peer(userID)
-
-    sendChannel.current = peerRef.current.createDataChannel('sendChannel')
+    getMedia()
+    // sendChannel.current = peerRef.current.createDataChannel('sendChannel')
 
     // listen to incoming messages from other peer
-    sendChannel.current.onmessage = handleReceiveMessage
+    // sendChannel.current.onmessage = handleReceiveMessage
   }
+
+  const getMedia = async () => {
+    let isVoiceOnly = false
+
+    try {
+      const mediaStream = await mediaDevices.getUserMedia(mediaConstraints)
+
+      if (isVoiceOnly) {
+        let videoTrack = await mediaStream.getVideoTracks()[0]
+        videoTrack.enabled = false
+      }
+
+      peerRef.current.addStream(mediaStream)
+      return mediaStream
+    } catch (err) {
+      // Handle Error
+      console.log({ err })
+    }
+  }
+
 
   function Peer(userID) {
     console.log('[INFO] JoinFreq Peer')
@@ -99,10 +128,10 @@ const JoinFreq = ({ room }) => {
         VoiceActivityDetection: true,
       },
     }
-    peerRef.current
-      .createOffer(sessionConstraints)
+    // ====================== 9. Create offer & setLocalDescription with offer ======================
+    // eslint-disable-next-line prettier/prettier
+    peerRef.current.createOffer(sessionConstraints)
       .then(offer => {
-        // ====================== 9. Create offer & setLocalDescription with offer ======================
         return peerRef.current.setLocalDescription(offer)
       })
       .then(() => {
@@ -173,16 +202,17 @@ const JoinFreq = ({ room }) => {
   }
 
   function handleAnswer(message) {
+    // =========== 20. Set remote descp and possibly emitting ice candidate event ============
+
     // Handle answer by the receiving peer
     console.log('[INFO] JoinFreq handleAnswer.')
     const desc = new RTCSessionDescription(message.sdp)
     // peerRef.current.addEventListener('addstream', e => {
     //   setRemoteMediaStream(e.stream)
     // })
-    // =========== 20. Set remote descp and possibly emitting ice candidate event ============
 
-    peerRef.current
-      .setRemoteDescription(desc)
+    // eslint-disable-next-line prettier/prettier
+    peerRef.current.setRemoteDescription(desc)
       .catch(e => console.log('Error handle answer', e))
   }
 
@@ -213,7 +243,7 @@ const JoinFreq = ({ room }) => {
 
   function handleNewICECandidateMsg(incoming) {
     // =========== 26. create & set ice candidate to peer  ============
-    console.log('[INFO] JoinFreq handleNewICECandidateMsg')
+    console.log('[INFO] JoinFreq handleNewICECandidateMsg', incoming)
     const candidate = new RTCIceCandidate(incoming.candidate)
 
     peerRef.current.addIceCandidate(candidate).catch(e => console.log(e))
