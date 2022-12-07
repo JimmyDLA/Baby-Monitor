@@ -26,7 +26,7 @@ const Home = ({ setNav, setGame, saveNewFreq }) => {
 
   return (
     <ScrollView
-      style={Layout.fill}
+      style={styles.container}
       contentContainerStyle={[
         Layout.fill,
         Layout.colCenter,
@@ -44,7 +44,7 @@ const Home = ({ setNav, setGame, saveNewFreq }) => {
       <Text>OR</Text>
 
       <TextInput
-        placeholder="placeholder"
+        placeholder="Frequency"
         onChangeText={handleOnChange}
         style={styles.input}
       />
@@ -62,8 +62,8 @@ const Home = ({ setNav, setGame, saveNewFreq }) => {
 const styles = {
   input: {
     width: 200,
-    height: 30,
-    borderColor: 'black',
+    height: 50,
+    borderColor: 'white',
     borderWidth: 2,
     marginVertical: 10,
   },
@@ -73,8 +73,9 @@ const styles = {
   },
   container: {
     width: '100%',
-    height: 300,
-    backgroundColor: 'white',
+    // height: 300,
+    backgroundColor: 'gray',
+    flex: 1,
   },
 }
 
