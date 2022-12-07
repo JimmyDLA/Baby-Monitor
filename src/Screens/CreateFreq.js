@@ -7,6 +7,7 @@ import {
   RTCView,
   mediaDevices,
 } from 'react-native-webrtc'
+import InCallManager from 'react-native-incall-manager'
 import io from 'socket.io-client'
 import 'react-native-get-random-values'
 import { v4 as uuidV4 } from 'uuid'
@@ -76,6 +77,7 @@ const CreateFreq = ({ startNewFrequency }) => {
       }
 
       setLocalMediaStream(mediaStream)
+      InCallManager.setSpeakerphoneOn(true)
       return mediaStream
     } catch (err) {
       // Handle Error
