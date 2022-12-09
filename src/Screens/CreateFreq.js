@@ -11,6 +11,7 @@ import InCallManager from 'react-native-incall-manager'
 import io from 'socket.io-client'
 import 'react-native-get-random-values'
 import { v4 as uuidV4 } from 'uuid'
+import QRCode from 'react-native-qrcode-svg'
 
 const URL = 'http://192.168.86.89:3000'
 const room = uuidV4()
@@ -58,15 +59,8 @@ const CreateFreq = ({ startNewFrequency }) => {
     socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
   }, [])
 
-  // useEffect(() => {
-  //   if (localMediaStream !== null) {
-  //     console.log('local media steam updated useEffet', localMediaStream)
-  //     peerRef.current.addStream(localMediaStream)
-  //   }
-  // }, [localMediaStream])
-
   const getMedia = async () => {
-    let isVoiceOnly = false
+    let isVoiceOnly = true
 
     try {
       const mediaStream = await mediaDevices.getUserMedia(mediaConstraints)
@@ -75,9 +69,8 @@ const CreateFreq = ({ startNewFrequency }) => {
         let videoTrack = await mediaStream.getVideoTracks()[0]
         videoTrack.enabled = false
       }
-
-      setLocalMediaStream(mediaStream)
       InCallManager.setSpeakerphoneOn(true)
+      setLocalMediaStream(mediaStream)
       return mediaStream
     } catch (err) {
       // Handle Error
@@ -85,19 +78,18 @@ const CreateFreq = ({ startNewFrequency }) => {
     }
   }
 
-  function callUser(userID) {
-    // This will initiate the call for the receiving peer
-    console.log('[INFO] createFreq Initiated a call')
-    peerRef.current = Peer(userID)
-    sendChannel.current = peerRef.current.createDataChannel('sendChannel')
+  // function callUser(userID) {
+  //   // This will initiate the call for the receiving peer
+  //   console.log('[INFO] createFreq Initiated a call')
+  //   peerRef.current = Peer(userID)
+  //   sendChannel.current = peerRef.current.createDataChannel('sendChannel')
 
-    // listen to incoming messages from other peer
-    sendChannel.current.onmessage = handleReceiveMessage
-  }
+  //   // listen to incoming messages from other peer
+  //   sendChannel.current.onmessage = handleReceiveMessage
+  // }
 
   function Peer(userID) {
     console.log('[INFO] createFreq Peer')
-
     /*
       Here we are using Turn and Stun server
       (ref: https://blog.ivrpowers.com/post/technologies/what-is-stun-turn-server/)
@@ -117,10 +109,6 @@ const CreateFreq = ({ startNewFrequency }) => {
       sendChannel.current = event.channel
       sendChannel.current.onmessage = handleReceiveMessage
       console.log('[SUCCESS] createFreq Connection established')
-
-      // peer.addStream(media)
-      // sendVideo()
-      // sendChannel.current.send(localMediaStream)
     }
     return peer
   }
@@ -169,23 +157,6 @@ const CreateFreq = ({ startNewFrequency }) => {
     }
 
     peerRef.current = Peer()
-    // peerRef.current.onsignalingstatechange = event => {
-    //   console.log('[STAT] createFreq signal', peerRef.current.signalingState)
-    // }
-    // peerRef.current.ondatachannel = event => {
-    //   sendChannel.current = event.channel
-    //   sendChannel.current.onmessage = handleReceiveMessage
-    //   console.log('[SUCCESS] createFreq Connection established', media.toURL())
-
-    //   peerRef.current.addStream(media)
-    //   // sendVideo()
-    //   // sendChannel.current.send(localMediaStream)
-    // }
-
-    // peerRef.current.onaddstream = event => {
-    //   console.log('=====================================================> EVENT!', event)
-    // }
-
     /*
       Session Description: It is the config information of the peer
       SDP stands for Session Description Protocol. The exchange
@@ -193,7 +164,6 @@ const CreateFreq = ({ startNewFrequency }) => {
     */
     const desc = new RTCSessionDescription(incoming.sdp)
     const media = await getMedia()
-
 
     /*
       Remote Description : Information about the other peer
@@ -276,7 +246,7 @@ const CreateFreq = ({ startNewFrequency }) => {
   return (
     <View style={styles.preview}>
       <Text>CREATE FREQUENCY</Text>
-      <Text>Incoming: {serverMsg}</Text>
+      <QRCode size={200} value={room} />
       {localMediaStream && (
         <View style={styles.rtcContainer}>
           <RTCView
@@ -296,7 +266,6 @@ const styles = {
   rtcContainer: {
     width: '100%',
     height: 300,
-    // flex: 1,
     alignItems: 'center',
     backgroundColor: 'pink',
   },
