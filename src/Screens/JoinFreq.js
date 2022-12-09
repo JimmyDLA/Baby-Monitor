@@ -7,7 +7,15 @@ import {
   RTCView,
   mediaDevices,
 } from 'react-native-webrtc'
-import { View, Text, TextInput, TouchableOpacity } from 'react-native'
+import InCallManager from 'react-native-incall-manager'
+import {
+  View,
+  Text,
+  Platform,
+  TextInput,
+  TouchableOpacity,
+  PermissionsAndroid,
+} from 'react-native'
 import { useTheme } from '@/Hooks'
 
 const URL = 'http://192.168.86.89:3000'
@@ -76,6 +84,8 @@ const JoinFreq = ({ room }) => {
 
     try {
       const mediaStream = await mediaDevices.getUserMedia(mediaConstraints)
+      const audioTrack = await mediaStream.getAudioTracks()[0]
+      audioTrack.enabled = !audioTrack.enabled
 
       if (isVoiceOnly) {
         let videoTrack = await mediaStream.getVideoTracks()[0]
@@ -83,6 +93,7 @@ const JoinFreq = ({ room }) => {
       }
 
       peerRef.current.addStream(mediaStream)
+      InCallManager.setSpeakerphoneOn(true)
       return mediaStream
     } catch (err) {
       // Handle Error
@@ -264,28 +275,6 @@ const JoinFreq = ({ room }) => {
   return (
     <View style={styles.preview}>
       <Text>JOIN FREQUENCY</Text>
-      <TextInput
-        placeholder="placeholder"
-        onChangeText={handleOnChange}
-        style={styles.input}
-      />
-      <TouchableOpacity
-        style={[Common.button.outline, Gutters.regularBMargin]}
-        onPress={handleSendMsg}
-      >
-        <Text style={Fonts.textRegular}>Send</Text>
-      </TouchableOpacity>
-      {remoteMediaStream && (
-        <View style={styles.rtcContainer}>
-          <RTCView
-            style={styles.rtcView}
-            mirror={true}
-            objectFit={'cover'}
-            streamURL={remoteMediaStream.toURL()}
-            zOrder={1}
-          />
-        </View>
-      )}
     </View>
   )
 }

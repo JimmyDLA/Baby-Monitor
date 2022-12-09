@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Text, TextInput, TouchableOpacity, ScrollView } from 'react-native'
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from 'react-native'
 import { useTheme } from '@/Hooks'
 
 const Home = ({ setNav, setGame, saveNewFreq }) => {
@@ -16,8 +22,16 @@ const Home = ({ setNav, setGame, saveNewFreq }) => {
   }
 
   const handleJoinFreq = () => {
-    saveNewFreq(joinFreq)
-    setNav({ screen: 'JoinFreq', params: joinFreq })
+    if (!joinFreq) {
+      Alert.alert(
+        "Can't Join",
+        "Can't join without a frequency. Please enter a frequency ID to join.",
+        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+      )
+    } else {
+      saveNewFreq(joinFreq)
+      setNav({ screen: 'JoinFreq', params: joinFreq })
+    }
   }
 
   const handleOnChange = e => {
@@ -66,6 +80,8 @@ const styles = {
     borderColor: 'white',
     borderWidth: 2,
     marginVertical: 10,
+    padding: 10,
+    color: 'white',
   },
   preview: {
     flex: 1,
@@ -73,7 +89,6 @@ const styles = {
   },
   container: {
     width: '100%',
-    // height: 300,
     backgroundColor: 'gray',
     flex: 1,
   },
