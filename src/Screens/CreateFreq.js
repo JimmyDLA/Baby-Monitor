@@ -60,7 +60,7 @@ const CreateFreq = ({ startNewFrequency }) => {
   }, [])
 
   const getMedia = async () => {
-    let isVoiceOnly = true
+    let isVoiceOnly = false
 
     try {
       const mediaStream = await mediaDevices.getUserMedia(mediaConstraints)
@@ -245,19 +245,11 @@ const CreateFreq = ({ startNewFrequency }) => {
 
   return (
     <View style={styles.preview}>
-      <Text>CREATE FREQUENCY</Text>
+      <Text style={styles.text}>Scan QR Code to join Frequency</Text>
       <QRCode size={200} value={room} />
-      {localMediaStream && (
-        <View style={styles.rtcContainer}>
-          <RTCView
-            style={styles.rtcView}
-            mirror={true}
-            objectFit={'cover'}
-            streamURL={localMediaStream.toURL()}
-            zOrder={1}
-          />
-        </View>
-      )}
+      <Text style={styles.text}>OR</Text>
+      <Text style={styles.text}>Type frequncy ID to join:</Text>
+      <Text style={styles.text}>{room}</Text>
     </View>
   )
 }
@@ -280,13 +272,16 @@ const styles = {
   preview: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     backgroundColor: 'white',
   },
   container: {
     width: '100%',
     height: 300,
     backgroundColor: 'white',
+  },
+  text: {
+    fontSize: 20,
   },
 }
 

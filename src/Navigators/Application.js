@@ -2,7 +2,7 @@ import React from 'react'
 import { SafeAreaView, StatusBar } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
-import { StartupContainer, CreateFreq, JoinFreq } from '../Screens'
+import { StartupContainer, CreateFreq, JoinFreq, EnterFreq } from '../Screens'
 import { useTheme } from '@/Hooks'
 import MainNavigator from './Main'
 import { navigationRef } from './utils'
@@ -37,6 +37,13 @@ const ApplicationNavigator = () => {
           <Stack.Screen
             name="JoinFreq"
             component={JoinFreq}
+            options={{
+              animationEnabled: true,
+            }}
+          />
+          <Stack.Screen
+            name="EnterFreq"
+            component={EnterFreq}
             options={{
               animationEnabled: true,
             }}

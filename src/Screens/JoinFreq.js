@@ -31,7 +31,7 @@ const mediaConstraints = {
 const JoinFreq = ({ room }) => {
   const { Common, Fonts, Gutters } = useTheme()
 
-  console.log(room)
+  console.log('[INFO] JoinFreq room:', room)
   const peerRef = useRef()
   const socketRef = useRef()
   const otherUser = useRef()
@@ -41,7 +41,7 @@ const JoinFreq = ({ room }) => {
   const [msg, setMsg] = useState('')
 
   useEffect(() => {
-    console.log('JoinFreq useEffect')
+    console.log('[INFO] JoinFreq useEffect')
     socketRef.current = io.connect(URL)
     // ====================== 1. Emit joining roomID to server ======================
     socketRef.current.emit('join-freq', room)
@@ -272,7 +272,17 @@ const JoinFreq = ({ room }) => {
     sendChannel.current.send(msg)
   }
 
-  return (
+  return remoteMediaStream ? (
+    <View style={styles.rtcContainer}>
+      <RTCView
+        style={styles.rtcView}
+        mirror={true}
+        objectFit={'cover'}
+        streamURL={remoteMediaStream.toURL()}
+        zOrder={1}
+      />
+    </View>
+  ) : (
     <View style={styles.preview}>
       <Text>JOIN FREQUENCY</Text>
     </View>
@@ -282,10 +292,8 @@ const JoinFreq = ({ room }) => {
 const styles = {
   rtcContainer: {
     width: '100%',
-    height: 300,
-    // flex: 1,
+    flex: 1,
     alignItems: 'center',
-    backgroundColor: 'pink',
   },
   rtcView: { width: '100%', height: '100%' },
   input: {
@@ -299,12 +307,6 @@ const styles = {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'gray',
-  },
-  container: {
-    width: '100%',
-    height: 300,
-    backgroundColor: 'white',
   },
 }
 

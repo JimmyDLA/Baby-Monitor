@@ -3,7 +3,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
+  View,
   Alert,
 } from 'react-native'
 import { useTheme } from '@/Hooks'
@@ -22,16 +22,8 @@ const Home = ({ setNav, setGame, saveNewFreq }) => {
   }
 
   const handleJoinFreq = () => {
-    if (!joinFreq) {
-      Alert.alert(
-        "Can't Join",
-        "Can't join without a frequency. Please enter a frequency ID to join.",
-        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
-      )
-    } else {
-      saveNewFreq(joinFreq)
-      setNav({ screen: 'JoinFreq', params: joinFreq })
-    }
+    // saveNewFreq(joinFreq)
+    setNav({ screen: 'EnterFreq', params: joinFreq })
   }
 
   const handleOnChange = e => {
@@ -39,41 +31,35 @@ const Home = ({ setNav, setGame, saveNewFreq }) => {
   }
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={[
-        Layout.fill,
-        Layout.colCenter,
-        Gutters.smallHPadding,
-      ]}
-    >
-      <TouchableOpacity
-        style={[Common.button.outline, Gutters.regularBMargin]}
-        onPress={handleCreateFreq}
-      >
-        <Text style={Fonts.textRegular}>Open Freq</Text>
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.button} onPress={handleCreateFreq}>
+        <Text style={styles.buttonText}>Create Frequency</Text>
       </TouchableOpacity>
-      <Text>{freq}</Text>
-
-      <Text>OR</Text>
-
-      <TextInput
-        placeholder="Frequency"
-        onChangeText={handleOnChange}
-        style={styles.input}
-      />
-      <TouchableOpacity
-        style={[Common.button.outline, Gutters.regularBMargin]}
-        onPress={handleJoinFreq}
-      >
-        <Text style={Fonts.textRegular}>Join Freq</Text>
+      <TouchableOpacity style={styles.button} onPress={handleJoinFreq}>
+        <Text style={styles.buttonText}>Join Frequency</Text>
       </TouchableOpacity>
-      <Text>{joinFreq}</Text>
-    </ScrollView>
+    </View>
   )
 }
 
 const styles = {
+  container: {
+    width: '100%',
+    backgroundColor: 'gray',
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  button: {
+    marginTop: 30,
+    height: 65,
+    width: '100%',
+    backgroundColor: '#27ae60',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: 'white',
+  },
   input: {
     width: 200,
     height: 50,
@@ -86,11 +72,6 @@ const styles = {
   preview: {
     flex: 1,
     alignItems: 'center',
-  },
-  container: {
-    width: '100%',
-    backgroundColor: 'gray',
-    flex: 1,
   },
 }
 
