@@ -9,7 +9,7 @@ const PendingView = () => (
 )
 
 const EnterFreq = ({ setNav, setGame, saveNewFreq }) => {
-  const [freq, setFreq] = useState('')
+  const [isScanning, setIsScanning] = useState(false)
   const [joinFreq, setJoinFreq] = useState('')
   const [QRCodeRead, setQRCodeRead] = useState(false)
 
@@ -43,10 +43,14 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq }) => {
     }
   }
 
-  return false ? (
+  const handleCamToggle = () => {
+    setIsScanning(!isScanning)
+  }
+
+  return isScanning ? (
     <View style={styles.container}>
       <View style={styles.buttonCont}>
-        <TouchableOpacity style={styles.button} onPress={handleCreateFreq}>
+        <TouchableOpacity style={styles.button} onPress={handleCamToggle}>
           <Text style={styles.buttonText}>Scan Frequency</Text>
         </TouchableOpacity>
       </View>
@@ -83,23 +87,35 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq }) => {
           buttonNegative: 'Cancel',
         }}
       >
-        {({ status }) => {
-          status === 'READY' ? (
-            <View style={styles.innerCamera}>
-              <View style={styles.verticalOverlay} />
-              <View style={styles.row2Container}>
-                <View style={styles.row2}>
-                  <View style={styles.horizontalOverlay} />
-                  <View style={styles.cameraHole} />
-                  <View style={styles.horizontalOverlay} />
+        {({ status }) =>
+          status !== 'READY' ? (
+            <PendingView />
+          ) : (
+            <View style={styles.innerContainer}>
+              <View style={styles.outterContainer}>
+                <View style={styles.top}>
+                  <Text style={styles.instruction}>
+                    Scan QR code to join frequency
+                  </Text>
+                </View>
+                <View style={styles.middle}>
+                  <View style={styles.middleLeft} />
+                  <View style={styles.middleRight} />
+                </View>
+                <View style={styles.bottom}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={handleCamToggle}
+                  >
+                    <Text style={styles.buttonText}>
+                      Enter Frequency ID Manually
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
-              <View style={styles.verticalOverlay} />
             </View>
-          ) : (
-            <PendingView />
           )
-        }}
+        }
       </RNCamera>
     </View>
   )
@@ -144,44 +160,52 @@ const styles = {
   },
   preview: {
     flex: 1,
-    // justifyContent: 'flex-end',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  innerCamera: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'pink',
-    zindez: 99,
-  },
-  verticalOverlay: {
-    height: '6%',
-    width: 100,
-    backgroundColor: 'pink',
-  },
-  row2Container: {
-    width: '100%',
-    height: '90%',
+  innerContainer: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  row2: {
-    height: '100%',
+  outterContainer: {
     width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-  },
-  horizontalOverlay: {
     height: '100%',
-    width: '5%',
-    backgroundColor: 'pink',
+    flexDirection: 'column',
   },
-  cameraHole: {
-    width: '90%',
-    height: '100%',
+  top: {
+    width: '100%',
+    height: '30%',
+    backgroundColor: 'rgba(0,0,0,0.7)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  middle: {
+    width: '100%',
+    height: '40%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  middleLeft: {
+    height: '100%',
+    width: '10%',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+  },
+  middleRight: {
+    height: '100%',
+    width: '10%',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+  },
+  bottom: {
+    width: '100%',
+    height: '30%',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    paddingHorizontal: 30,
+  },
+  instruction: {
+    marginBottom: 30,
+    color: 'white',
+    fontSize: 20,
   },
 }
 

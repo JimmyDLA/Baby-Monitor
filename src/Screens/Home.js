@@ -1,33 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Alert,
-} from 'react-native'
-import { useTheme } from '@/Hooks'
+import React from 'react'
+import { Text, TouchableOpacity, View } from 'react-native'
 
-const Home = ({ setNav, setGame, saveNewFreq }) => {
-  const { Common, Fonts, Gutters, Layout } = useTheme()
-  const [freq, setFreq] = useState('')
-  const [joinFreq, setJoinFreq] = useState('')
-
-  useEffect(() => {
-    console.log('useEffect')
-  }, [])
-
+const Home = ({ setNav, setGame }) => {
   const handleCreateFreq = () => {
     setGame(true)
   }
 
   const handleJoinFreq = () => {
-    // saveNewFreq(joinFreq)
-    setNav({ screen: 'EnterFreq', params: joinFreq })
-  }
-
-  const handleOnChange = e => {
-    setJoinFreq(e)
+    setNav({ screen: 'EnterFreq' })
   }
 
   return (

@@ -16,6 +16,8 @@ import QRCode from 'react-native-qrcode-svg'
 const URL = 'http://192.168.86.89:3000'
 const room = uuidV4()
 const mediaConstraints = {
+  // don't know if noise suppression actually work as is
+  noiseSuppression: false,
   audio: true,
   video: {
     frameRate: 30,
