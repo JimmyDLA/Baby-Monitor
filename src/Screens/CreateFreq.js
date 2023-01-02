@@ -4,7 +4,6 @@ import {
   RTCPeerConnection,
   RTCSessionDescription,
   RTCIceCandidate,
-  RTCView,
   mediaDevices,
 } from 'react-native-webrtc'
 import Config from 'react-native-config'
