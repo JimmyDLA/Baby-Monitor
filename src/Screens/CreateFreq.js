@@ -7,13 +7,14 @@ import {
   RTCView,
   mediaDevices,
 } from 'react-native-webrtc'
+import Config from 'react-native-config'
 import InCallManager from 'react-native-incall-manager'
 import io from 'socket.io-client'
 import 'react-native-get-random-values'
 import { v4 as uuidV4 } from 'uuid'
 import QRCode from 'react-native-qrcode-svg'
 
-const URL = 'http://192.168.86.89:3000'
+const URL = Config.SERVER
 const room = uuidV4()
 const mediaConstraints = {
   // don't know if noise suppression actually work as is

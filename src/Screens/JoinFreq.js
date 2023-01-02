@@ -7,6 +7,7 @@ import {
   RTCView,
   mediaDevices,
 } from 'react-native-webrtc'
+import Config from 'react-native-config'
 import InCallManager from 'react-native-incall-manager'
 import {
   View,
@@ -18,8 +19,8 @@ import {
 } from 'react-native'
 import { useTheme } from '@/Hooks'
 
-const URL = 'http://192.168.86.89:3000'
-
+const URL = Config.SERVER
+console.warn(URL)
 const mediaConstraints = {
   audio: true,
   video: {
@@ -41,9 +42,10 @@ const JoinFreq = ({ room }) => {
   const [msg, setMsg] = useState('')
 
   useEffect(() => {
-    console.log('[INFO] JoinFreq useEffect')
+    console.log('[INFO] JoinFreq useEffect', room)
     socketRef.current = io.connect(URL)
     // ====================== 1. Emit joining roomID to server ======================
+
     socketRef.current.emit('join-freq', room)
 
     // ====================== 4. Add Listener for server if there is another user in room ======================
