@@ -72,6 +72,11 @@ io.on('connection', socket => {
       // =========== 24. Emit ice candidate to tageted user ============
       io.to(incoming.target).emit('ice-candidate', incoming)
     })
+
+    socket.on('end', incoming => {
+      console.log('[SERVER] end, ')
+      io.to(incoming.target).emit('end', incoming)
+    })
     // socket.emit('user', userId)
     // socket.to(freqID).emit('user-connected', userId)
   })

@@ -9,14 +9,7 @@ import {
 } from 'react-native-webrtc'
 import Config from 'react-native-config'
 import InCallManager from 'react-native-incall-manager'
-import {
-  View,
-  Text,
-  Platform,
-  TextInput,
-  TouchableOpacity,
-  PermissionsAndroid,
-} from 'react-native'
+import { View, Text } from 'react-native'
 import { useTheme } from '@/Hooks'
 
 const URL = Config.SERVER
@@ -29,7 +22,7 @@ const mediaConstraints = {
   },
 }
 
-const JoinFreq = ({ room }) => {
+const JoinFreq = ({ room, setNav }) => {
   const { Common, Fonts, Gutters } = useTheme()
 
   console.log('[INFO] JoinFreq room:', room)
@@ -68,6 +61,8 @@ const JoinFreq = ({ room }) => {
     socketRef.current.on('answer', handleAnswer)
     // ====================== 25. Add Listener for incoming ice-candidate ======================
     socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
+
+    socketRef.current.on('end', handleEnd)
   }, [])
 
   function callUser(userID) {
@@ -102,7 +97,6 @@ const JoinFreq = ({ room }) => {
       console.log({ err })
     }
   }
-
 
   function Peer(userID) {
     console.log('[INFO] JoinFreq Peer')
@@ -252,6 +246,15 @@ const JoinFreq = ({ room }) => {
       }
       socketRef.current.emit('ice-candidate', payload)
     }
+  }
+
+  function handleEnd() {
+    console.log('[INFO] JoinFreq end')
+
+    peerRef.current.close()
+    peerRef.current = null
+    setRemoteMediaStream(null)
+    setNav({ screen: 'Home' })
   }
 
   function handleNewICECandidateMsg(incoming) {
