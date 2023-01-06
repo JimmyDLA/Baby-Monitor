@@ -51,7 +51,7 @@ io.on('connection', socket => {
     */
     // ====================== 11. Listener to incoming Offer ======================
     socket.on('offer', payload => {
-      console.log('[SERVER] offer, ')
+      console.log('[SERVER] offer ')
       // ====================== 12. Emit offer to targeted user ======================
       io.to(payload.target).emit('offer', payload)
     })
@@ -68,9 +68,24 @@ io.on('connection', socket => {
 
     // =========== 23. Listen to incoming ice candidate ============
     socket.on('ice-candidate', incoming => {
-      console.log('[SERVER] ice-candidate, ')
+      console.log('[SERVER] ice-candidate')
       // =========== 24. Emit ice candidate to tageted user ============
       io.to(incoming.target).emit('ice-candidate', incoming)
+    })
+
+    socket.on('end', incoming => {
+      console.log('[SERVER] end')
+      io.emit('end')
+    })
+
+    socket.on('switch-camera', () => {
+      console.log('[SERVER] Switching Camera')
+      io.emit('switch-camera')
+    })
+
+    socket.on('toggle-audio', () => {
+      console.log('[SERVER] Toggle audio')
+      io.emit('toggle-audio')
     })
     // socket.emit('user', userId)
     // socket.to(freqID).emit('user-connected', userId)

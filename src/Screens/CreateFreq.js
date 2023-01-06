@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import {
   RTCPeerConnection,
   RTCSessionDescription,
@@ -14,7 +14,6 @@ import { v4 as uuidV4 } from 'uuid'
 import QRCode from 'react-native-qrcode-svg'
 
 const URL = Config.SERVER
-const room = uuidV4()
 const mediaConstraints = {
   // don't know if noise suppression actually work as is
   noiseSuppression: false,
@@ -25,14 +24,17 @@ const mediaConstraints = {
   },
 }
 
-const CreateFreq = ({ startNewFrequency }) => {
+const CreateFreq = ({ setNav, startNewFrequency }) => {
+  const room = uuidV4()
   const peerRef = useRef()
   const socketRef = useRef()
   const otherUser = useRef()
   const sendChannel = useRef() // Data channel
+  const mediaRef = useRef() // Data channel
 
   const [serverMsg, setServerMsg] = useState('')
   const [localMediaStream, setLocalMediaStream] = useState(null)
+  const [isVoiceOnly, setIsVoiceOnly] = useState(false)
 
   useEffect(() => {
     console.log('create freq OnMount useEffect - room:', room)
@@ -59,20 +61,26 @@ const CreateFreq = ({ startNewFrequency }) => {
     socketRef.current.on('answer', handleAnswer)
 
     socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
+
+    socketRef.current.on('switch-camera', handleSwitch)
+
+    socketRef.current.on('toggle-audio', handleOnAndOffCamera)
+
+    socketRef.current.on('end', handleEnd)
   }, [])
 
   const getMedia = async () => {
-    let isVoiceOnly = false
+    let voiceOnly = false
 
     try {
       const mediaStream = await mediaDevices.getUserMedia(mediaConstraints)
 
-      if (isVoiceOnly) {
+      if (voiceOnly) {
         let videoTrack = await mediaStream.getVideoTracks()[0]
         videoTrack.enabled = false
       }
       InCallManager.setSpeakerphoneOn(true)
-      setLocalMediaStream(mediaStream)
+
       return mediaStream
     } catch (err) {
       // Handle Error
@@ -159,13 +167,15 @@ const CreateFreq = ({ startNewFrequency }) => {
     }
 
     peerRef.current = Peer()
+    mediaRef.current = await getMedia()
+    setLocalMediaStream(mediaRef.current)
+
     /*
       Session Description: It is the config information of the peer
       SDP stands for Session Description Protocol. The exchange
       of config information between the peers happens using this protocol
     */
     const desc = new RTCSessionDescription(incoming.sdp)
-    const media = await getMedia()
 
     /*
       Remote Description : Information about the other peer
@@ -176,7 +186,7 @@ const CreateFreq = ({ startNewFrequency }) => {
     // eslint-disable-next-line prettier/prettier
     peerRef.current.setRemoteDescription(desc)
       .then(() => {
-        peerRef.current.addStream(media)
+        peerRef.current.addStream(mediaRef.current)
       })
       .then(() => {
         return peerRef.current.createAnswer()
@@ -185,7 +195,6 @@ const CreateFreq = ({ startNewFrequency }) => {
         return peerRef.current.setLocalDescription(answer)
       })
       .then(() => {
-        console.log('[INFO] createFreq handleOffer')
         const payload = {
           target: incoming.caller,
           caller: socketRef.current.id,
@@ -237,6 +246,27 @@ const CreateFreq = ({ startNewFrequency }) => {
     console.log('[INFO] createFreq handleTrackEvnet', e)
   }
 
+  function handleEnd() {
+    setLocalMediaStream(null)
+    console.log('[INFO] createFreq End')
+    peerRef.current.close()
+    peerRef.current = null
+    setNav({ screen: 'Home' })
+  }
+
+  async function handleSwitch() {
+    console.log('[INFO] createFreq handleSwitch')
+    let videoTrack = await mediaRef.current.getVideoTracks()[0]
+    videoTrack._switchCamera()
+  }
+
+  async function handleOnAndOffCamera() {
+    console.log('[INFO] createFreq handleOnAndOffCamera')
+    let videoTrack = await mediaRef.current.getVideoTracks()[0]
+    videoTrack.enabled = !isVoiceOnly
+    setIsVoiceOnly(!isVoiceOnly)
+  }
+
   function handleNewICECandidateMsg(incoming) {
     console.log('[INFO] createFreq handleNewICECandidateMsg')
 
@@ -245,13 +275,19 @@ const CreateFreq = ({ startNewFrequency }) => {
     peerRef.current.addIceCandidate(candidate).catch(e => console.log(e))
   }
 
-  return (
+  return !localMediaStream ? (
     <View style={styles.preview}>
       <Text style={styles.text}>Scan QR Code to join Frequency</Text>
       <QRCode size={200} value={room} />
       <Text style={styles.text}>OR</Text>
       <Text style={styles.text}>Type frequncy ID to join:</Text>
       <Text style={styles.text}>{room}</Text>
+    </View>
+  ) : (
+    <View style={styles.preview}>
+      <TouchableOpacity style={styles.button} onPress={handleOnAndOffCamera}>
+        <Text style={styles.buttonText}>Switch Camera</Text>
+      </TouchableOpacity>
     </View>
   )
 }
@@ -276,6 +312,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'space-around',
     backgroundColor: 'white',
+    paddingHorizontal: 20,
   },
   container: {
     width: '100%',
@@ -284,6 +321,17 @@ const styles = {
   },
   text: {
     fontSize: 20,
+  },
+  button: {
+    marginTop: 30,
+    height: 65,
+    width: '100%',
+    backgroundColor: '#27ae60',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: 'white',
   },
 }
 
