@@ -14,7 +14,6 @@ import { v4 as uuidV4 } from 'uuid'
 import QRCode from 'react-native-qrcode-svg'
 
 const URL = Config.SERVER
-const room = uuidV4()
 const mediaConstraints = {
   // don't know if noise suppression actually work as is
   noiseSuppression: false,
@@ -26,13 +25,16 @@ const mediaConstraints = {
 }
 
 const CreateFreq = ({ setNav, startNewFrequency }) => {
+  const room = uuidV4()
   const peerRef = useRef()
   const socketRef = useRef()
   const otherUser = useRef()
   const sendChannel = useRef() // Data channel
+  const mediaRef = useRef() // Data channel
 
   const [serverMsg, setServerMsg] = useState('')
   const [localMediaStream, setLocalMediaStream] = useState(null)
+  const [isVoiceOnly, setIsVoiceOnly] = useState(false)
 
   useEffect(() => {
     console.log('create freq OnMount useEffect - room:', room)
@@ -60,34 +62,25 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
 
     socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
 
-    socketRef.current.on('close', handleEnd)
+    socketRef.current.on('switch-camera', handleSwitch)
 
+    socketRef.current.on('toggle-audio', handleOnAndOffCamera)
+
+    socketRef.current.on('end', handleEnd)
   }, [])
 
-  const turnOffCams = async () => {
-    try {
-      console.log('[INFO] createFreq turn off')
-      InCallManager.stop()
-
-      // const mediaStream = await mediaDevices.getUserMedia(mediaConstraints)
-      // await mediaStream.getVideoTracks()[0].stop()
-    } catch (error) {
-      console.log({ error })
-    }
-  }
-
   const getMedia = async () => {
-    let isVoiceOnly = false
+    let voiceOnly = false
 
     try {
       const mediaStream = await mediaDevices.getUserMedia(mediaConstraints)
 
-      if (isVoiceOnly) {
+      if (voiceOnly) {
         let videoTrack = await mediaStream.getVideoTracks()[0]
         videoTrack.enabled = false
       }
       InCallManager.setSpeakerphoneOn(true)
-      // setLocalMediaStream(mediaStream)
+
       return mediaStream
     } catch (err) {
       // Handle Error
@@ -174,15 +167,15 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     }
 
     peerRef.current = Peer()
+    mediaRef.current = await getMedia()
+    setLocalMediaStream(mediaRef.current)
+
     /*
       Session Description: It is the config information of the peer
       SDP stands for Session Description Protocol. The exchange
       of config information between the peers happens using this protocol
     */
     const desc = new RTCSessionDescription(incoming.sdp)
-    const media = await getMedia()
-
-    setLocalMediaStream(media)
 
     /*
       Remote Description : Information about the other peer
@@ -193,7 +186,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     // eslint-disable-next-line prettier/prettier
     peerRef.current.setRemoteDescription(desc)
       .then(() => {
-        peerRef.current.addStream(media)
+        peerRef.current.addStream(mediaRef.current)
       })
       .then(() => {
         return peerRef.current.createAnswer()
@@ -258,12 +251,20 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     console.log('[INFO] createFreq End')
     peerRef.current.close()
     peerRef.current = null
-    const payload = {
-      target: otherUser.current,
-      origin: socketRef.current.id,
-    }
-    socketRef.current.emit('end', payload)
     setNav({ screen: 'Home' })
+  }
+
+  async function handleSwitch() {
+    console.log('[INFO] createFreq handleSwitch')
+    let videoTrack = await mediaRef.current.getVideoTracks()[0]
+    videoTrack._switchCamera()
+  }
+
+  async function handleOnAndOffCamera() {
+    console.log('[INFO] createFreq handleOnAndOffCamera')
+    let videoTrack = await mediaRef.current.getVideoTracks()[0]
+    videoTrack.enabled = !isVoiceOnly
+    setIsVoiceOnly(!isVoiceOnly)
   }
 
   function handleNewICECandidateMsg(incoming) {
@@ -284,8 +285,8 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     </View>
   ) : (
     <View style={styles.preview}>
-      <TouchableOpacity style={styles.button} onPress={handleEnd}>
-        <Text style={styles.buttonText}>Turn off Cams</Text>
+      <TouchableOpacity style={styles.button} onPress={handleOnAndOffCamera}>
+        <Text style={styles.buttonText}>Switch Camera</Text>
       </TouchableOpacity>
     </View>
   )
@@ -311,6 +312,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'space-around',
     backgroundColor: 'white',
+    paddingHorizontal: 20,
   },
   container: {
     width: '100%',

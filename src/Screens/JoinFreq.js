@@ -9,11 +9,11 @@ import {
 } from 'react-native-webrtc'
 import Config from 'react-native-config'
 import InCallManager from 'react-native-incall-manager'
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { useTheme } from '@/Hooks'
 
 const URL = Config.SERVER
-console.warn(URL)
+
 const mediaConstraints = {
   audio: true,
   video: {
@@ -32,6 +32,7 @@ const JoinFreq = ({ room, setNav }) => {
   const sendChannel = useRef() // Data channel
 
   const [remoteMediaStream, setRemoteMediaStream] = useState(null)
+  const [isVoiceOnly, setIsVoiceOnly] = useState(false)
   const [msg, setMsg] = useState('')
 
   useEffect(() => {
@@ -77,14 +78,14 @@ const JoinFreq = ({ room, setNav }) => {
   }
 
   const getMedia = async () => {
-    let isVoiceOnly = false
+    let voiceOnly = false
 
     try {
       const mediaStream = await mediaDevices.getUserMedia(mediaConstraints)
       const audioTrack = await mediaStream.getAudioTracks()[0]
       audioTrack.enabled = !audioTrack.enabled
 
-      if (isVoiceOnly) {
+      if (voiceOnly) {
         let videoTrack = await mediaStream.getVideoTracks()[0]
         videoTrack.enabled = false
       }
@@ -199,11 +200,7 @@ const JoinFreq = ({ room, setNav }) => {
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         }
-        // peerRef.current.addEventListener('addstream', event => {
-        //   // Grab the remote stream from the connected participant.
-        //   console.log('=================================================================================================> EVENT!',)
-        //   setRemoteMediaStream(event.stream)
-        // })
+
         socketRef.current.emit('answer', payload)
       })
   }
@@ -214,9 +211,6 @@ const JoinFreq = ({ room, setNav }) => {
     // Handle answer by the receiving peer
     console.log('[INFO] JoinFreq handleAnswer.')
     const desc = new RTCSessionDescription(message.sdp)
-    // peerRef.current.addEventListener('addstream', e => {
-    //   setRemoteMediaStream(e.stream)
-    // })
 
     // eslint-disable-next-line prettier/prettier
     peerRef.current.setRemoteDescription(desc)
@@ -250,11 +244,14 @@ const JoinFreq = ({ room, setNav }) => {
 
   function handleEnd() {
     console.log('[INFO] JoinFreq end')
+    setRemoteMediaStream(null)
 
     peerRef.current.close()
     peerRef.current = null
-    setRemoteMediaStream(null)
     setNav({ screen: 'Home' })
+  }
+  function emitEnd() {
+    socketRef.current.emit('end')
   }
 
   function handleNewICECandidateMsg(incoming) {
@@ -269,23 +266,41 @@ const JoinFreq = ({ room, setNav }) => {
     console.log('[INFO] JoinFreq Track received from peer', e)
   }
 
-  const handleOnChange = e => {
-    setMsg(e)
+  const emitSwitchCamera = () => {
+    socketRef.current.emit('switch-camera')
   }
 
-  const handleSendMsg = () => {
-    sendChannel.current.send(msg)
+  const emitToggleAudio = () => {
+    setIsVoiceOnly(!isVoiceOnly)
+    socketRef.current.emit('toggle-audio')
   }
 
   return remoteMediaStream ? (
     <View style={styles.rtcContainer}>
-      <RTCView
-        style={styles.rtcView}
-        mirror={true}
-        objectFit={'cover'}
-        streamURL={remoteMediaStream.toURL()}
-        zOrder={1}
-      />
+      {!isVoiceOnly && (
+        <RTCView
+          style={styles.rtcView}
+          mirror={true}
+          objectFit={'cover'}
+          streamURL={remoteMediaStream.toURL()}
+          zOrder={1}
+        />
+      )}
+      <TouchableOpacity
+        style={[styles.button, styles.switchButton]}
+        onPress={emitSwitchCamera}
+      >
+        <Text style={styles.buttonText}>Switch Camera</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={emitEnd}>
+        <Text style={styles.buttonText}>End Call</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, styles.audioButton]}
+        onPress={emitToggleAudio}
+      >
+        <Text style={styles.buttonText}>Audio Only</Text>
+      </TouchableOpacity>
     </View>
   ) : (
     <View style={styles.preview}>
@@ -312,6 +327,30 @@ const styles = {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  button: {
+    position: 'absolute',
+    bottom: 10,
+    left: 150,
+    marginTop: 30,
+    height: 80,
+    width: 80,
+    backgroundColor: '#c0392b',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 99,
+    borderRadius: 50,
+  },
+  switchButton: {
+    backgroundColor: '#27ae60',
+    left: 50,
+  },
+  audioButton: {
+    backgroundColor: '#27ae60',
+    left: 250,
+  },
+  buttonText: {
+    color: 'white',
   },
 }
 
