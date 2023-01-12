@@ -2,9 +2,14 @@ const express = require('express')
 const app = express()
 const http = require('http')
 const server = http.createServer(app)
-const io = require('socket.io')(server)
+const io = require('socket.io')(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+  },
+})
 const { v4: uuidV4 } = require('uuid')
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3001
 
 console.log('welcome')
 app.use(express.static('public'))

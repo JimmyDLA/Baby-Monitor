@@ -13,6 +13,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import { useTheme } from '@/Hooks'
 
 const URL = Config.SERVER
+console.warn(URL)
 
 const mediaConstraints = {
   audio: true,
@@ -38,6 +39,8 @@ const JoinFreq = ({ room, setNav }) => {
   useEffect(() => {
     console.log('[INFO] JoinFreq useEffect', room)
     socketRef.current = io.connect(URL)
+    console.log('[INFO] JoinFreq sockeet', socketRef.current)
+
     // ====================== 1. Emit joining roomID to server ======================
 
     socketRef.current.emit('join-freq', room)
@@ -250,6 +253,7 @@ const JoinFreq = ({ room, setNav }) => {
     peerRef.current = null
     setNav({ screen: 'Home' })
   }
+
   function emitEnd() {
     socketRef.current.emit('end')
   }

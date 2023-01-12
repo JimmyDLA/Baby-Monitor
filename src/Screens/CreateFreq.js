@@ -14,6 +14,7 @@ import { v4 as uuidV4 } from 'uuid'
 import QRCode from 'react-native-qrcode-svg'
 
 const URL = Config.SERVER
+
 const mediaConstraints = {
   // don't know if noise suppression actually work as is
   noiseSuppression: false,
@@ -30,7 +31,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
   const socketRef = useRef()
   const otherUser = useRef()
   const sendChannel = useRef() // Data channel
-  const mediaRef = useRef() // Data channel
+  const localMediaRef = useRef()
 
   const [serverMsg, setServerMsg] = useState('')
   const [localMediaStream, setLocalMediaStream] = useState(null)
@@ -167,8 +168,8 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     }
 
     peerRef.current = Peer()
-    mediaRef.current = await getMedia()
-    setLocalMediaStream(mediaRef.current)
+    localMediaRef.current = await getMedia()
+    setLocalMediaStream(localMediaRef.current)
 
     /*
       Session Description: It is the config information of the peer
@@ -186,7 +187,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     // eslint-disable-next-line prettier/prettier
     peerRef.current.setRemoteDescription(desc)
       .then(() => {
-        peerRef.current.addStream(mediaRef.current)
+        peerRef.current.addStream(localMediaRef.current)
       })
       .then(() => {
         return peerRef.current.createAnswer()
@@ -247,8 +248,9 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
   }
 
   function handleEnd() {
-    setLocalMediaStream(null)
     console.log('[INFO] createFreq End')
+    localMediaRef.current.getTracks().map(track => track.stop())
+    setLocalMediaStream(null)
     peerRef.current.close()
     peerRef.current = null
     setNav({ screen: 'Home' })
@@ -256,13 +258,33 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
 
   async function handleSwitch() {
     console.log('[INFO] createFreq handleSwitch')
-    let videoTrack = await mediaRef.current.getVideoTracks()[0]
-    videoTrack._switchCamera()
+    let cameraCount = 0
+
+    try {
+      const devices = await mediaDevices.enumerateDevices()
+
+      devices.map(device => {
+        if (device.kind !== 'videoinput') {
+          return
+        }
+
+        cameraCount = cameraCount + 1
+      })
+    } catch (err) {
+      // Handle Error
+      console.log('[ERR] createFreq handleSwitch error')
+    }
+    console.log('[INFO] createFreq', { cameraCount })
+
+    if (cameraCount > 1) {
+      let videoTrack = await localMediaRef.current.getVideoTracks()[0]
+      videoTrack._switchCamera()
+    }
   }
 
   async function handleOnAndOffCamera() {
     console.log('[INFO] createFreq handleOnAndOffCamera')
-    let videoTrack = await mediaRef.current.getVideoTracks()[0]
+    let videoTrack = await localMediaRef.current.getVideoTracks()[0]
     videoTrack.enabled = !isVoiceOnly
     setIsVoiceOnly(!isVoiceOnly)
   }
@@ -285,7 +307,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     </View>
   ) : (
     <View style={styles.preview}>
-      <TouchableOpacity style={styles.button} onPress={handleOnAndOffCamera}>
+      <TouchableOpacity style={styles.button} onPress={handleSwitch}>
         <Text style={styles.buttonText}>Switch Camera</Text>
       </TouchableOpacity>
     </View>
