@@ -92,8 +92,6 @@ io.on('connection', socket => {
       console.log('[SERVER] Toggle audio')
       io.emit('toggle-audio')
     })
-    // socket.emit('user', userId)
-    // socket.to(freqID).emit('user-connected', userId)
   })
 })
 
