@@ -32,10 +32,10 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
   const otherUser = useRef()
   const sendChannel = useRef() // Data channel
   const localMediaRef = useRef()
+  const isVoiceOnly = useRef(false)
 
   const [serverMsg, setServerMsg] = useState('')
   const [localMediaStream, setLocalMediaStream] = useState(null)
-  const [isVoiceOnly, setIsVoiceOnly] = useState(false)
 
   useEffect(() => {
     console.log('create freq OnMount useEffect - room:', room)
@@ -80,7 +80,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
         let videoTrack = await mediaStream.getVideoTracks()[0]
         videoTrack.enabled = false
       }
-      InCallManager.setSpeakerphoneOn(true)
+      InCallManager.setForceSpeakerphoneOn(true)
 
       return mediaStream
     } catch (err) {
@@ -283,10 +283,11 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
   }
 
   async function handleOnAndOffCamera() {
-    console.log('[INFO] createFreq handleOnAndOffCamera')
+    console.log('[INFO] createFreq handleOnAndOffCamera', !isVoiceOnly.current)
     let videoTrack = await localMediaRef.current.getVideoTracks()[0]
-    videoTrack.enabled = !isVoiceOnly
-    setIsVoiceOnly(!isVoiceOnly)
+    videoTrack.enabled = isVoiceOnly.current
+    isVoiceOnly.current = !isVoiceOnly.current
+    // setIsVoiceOnly(!isVoiceOnl.cuy)
   }
 
   function handleNewICECandidateMsg(incoming) {
@@ -348,7 +349,7 @@ const styles = {
     marginTop: 30,
     height: 65,
     width: '100%',
-    backgroundColor: '#27ae60',
+    backgroundColor: 'rgb(46,103,188)',
     alignItems: 'center',
     justifyContent: 'center',
   },

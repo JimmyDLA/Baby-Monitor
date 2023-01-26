@@ -141,7 +141,7 @@ const styles = {
     marginTop: 30,
     height: 65,
     width: '100%',
-    backgroundColor: '#27ae60',
+    backgroundColor: 'rgb(46,103,188)',
     alignItems: 'center',
     justifyContent: 'center',
   },
