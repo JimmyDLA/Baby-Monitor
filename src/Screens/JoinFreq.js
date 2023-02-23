@@ -31,6 +31,7 @@ const JoinFreq = ({ room, setNav }) => {
   const socketRef = useRef()
   const otherUser = useRef()
   const sendChannel = useRef() // Data channel
+  const audioInterval = useRef()
 
   const [remoteMediaStream, setRemoteMediaStream] = useState(null)
   const [isVoiceOnly, setIsVoiceOnly] = useState(false)
@@ -125,9 +126,15 @@ const JoinFreq = ({ room, setNav }) => {
     return peer
   }
 
-  function handleAddStream(event) {
+  async function handleAddStream(event) {
     console.log('[INFO] JoinFreq onaddstream', { event })
     setRemoteMediaStream(event.stream)
+    const stats = await peerRef.current.getStats()
+    for (let value of stats) {
+      if (value[1].audioLevel) {
+        console.log('[INFO] JoinFreq Stats value', value[1].audioLevel)
+      }
+    }
   }
 
   function handleNegotiationNeededEvent(userID) {
@@ -263,7 +270,9 @@ const JoinFreq = ({ room, setNav }) => {
     console.log('[INFO] JoinFreq handleNewICECandidateMsg', incoming)
     const candidate = new RTCIceCandidate(incoming.candidate)
 
-    peerRef.current.addIceCandidate(candidate).catch(e => console.log(e))
+    peerRef.current
+      .addIceCandidate(candidate)
+      .catch(e => console.log('[ERR] JoinFreq handleNewICECandidateMsg', e))
   }
 
   function handleTrackEvnet(e) {
@@ -274,9 +283,34 @@ const JoinFreq = ({ room, setNav }) => {
     socketRef.current.emit('switch-camera')
   }
 
+  const setAudioInterval = () => {
+    console.log('[INFO] JoinFreq setAudioInterval')
+    audioInterval.current = setInterval(async () => {
+      const stats = await peerRef.current.getStats()
+      for (let value of stats) {
+        if (value[1].audioLevel) {
+          console.log('[INFO] JoinFreq Stats value', value[1].audioLevel)
+        }
+      }
+    }, 500)
+  }
+
+  const clearAudioInterval = () => {
+    console.log('[INFO] JoinFreq clearAudioInterval')
+    clearInterval(audioInterval.current)
+  }
+
   const emitToggleAudio = () => {
+    console.log('[INFO] JoinFreq emitToggleAudio')
     setIsVoiceOnly(!isVoiceOnly)
     socketRef.current.emit('toggle-audio')
+    if (isVoiceOnly) {
+      console.log('[INFO] JoinFreq isVoiceOnly')
+      setAudioInterval()
+    } else {
+      console.log('[INFO] JoinFreq isVoiceOnly else')
+      clearAudioInterval()
+    }
   }
 
   return remoteMediaStream ? (
