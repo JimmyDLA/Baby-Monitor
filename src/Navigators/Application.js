@@ -2,9 +2,14 @@ import React from 'react'
 import { SafeAreaView, StatusBar } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
-import { StartupContainer, CreateFreq, JoinFreq, EnterFreq } from '../Screens'
+import {
+  StartupContainer,
+  CreateFreq,
+  JoinFreq,
+  EnterFreq,
+  Home,
+} from '../Screens'
 import { useTheme } from '@/Hooks'
-import MainNavigator from './Main'
 import { navigationRef } from './utils'
 
 const Stack = createStackNavigator()
@@ -21,8 +26,8 @@ const ApplicationNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Startup" component={StartupContainer} />
           <Stack.Screen
-            name="Main"
-            component={MainNavigator}
+            name="Home"
+            component={Home}
             options={{
               animationEnabled: false,
             }}

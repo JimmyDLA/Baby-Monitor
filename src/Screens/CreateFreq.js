@@ -38,7 +38,6 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
   const [isVoiceOnly, setIsVoiceOnly] = useState(false)
 
   useEffect(() => {
-    console.log('create freq OnMount useEffect - room:', room)
     socketRef.current = io.connect(URL)
     startNewFrequency()
 
@@ -58,16 +57,16 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     })
     // ====================== 13. Add listener for icoming offers ======================
     socketRef.current.on('offer', handleOffer)
-
     socketRef.current.on('answer', handleAnswer)
-
     socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
-
     socketRef.current.on('switch-camera', handleSwitch)
-
     socketRef.current.on('toggle-audio', handleOnAndOffCamera)
-
     socketRef.current.on('end', handleEnd)
+
+    return () => {
+      console.log('[INFO] createFreq cleanup ')
+      socketRef.current.disconnect()
+    }
   }, [])
 
   const getMedia = async () => {
@@ -251,8 +250,10 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     console.log('[INFO] createFreq End')
     localMediaRef.current.getTracks().map(track => track.stop())
     setLocalMediaStream(null)
+    peerRef.current._unregisterEvents()
     peerRef.current.close()
     peerRef.current = null
+    socketRef.current.disconnect()
     setNav({ screen: 'Home' })
   }
 
