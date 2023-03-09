@@ -130,7 +130,7 @@ const JoinFreq = ({ room, setNav }) => {
       }
 
       peerRef.current.addStream(mediaStream)
-      InCallManager.setSpeakerphoneOn(true)
+      InCallManager.setForceSpeakerphoneOn(true)
       return mediaStream
     } catch (err) {
       // Handle Error
@@ -364,21 +364,23 @@ const JoinFreq = ({ room, setNav }) => {
       ) : (
         <VolumeMeter volume={volumeLevel} style={styles.volumeMeter} />
       )}
-      <TouchableOpacity
-        style={[styles.button, styles.switchButton]}
-        onPress={emitSwitchCamera}
-      >
-        <Text style={styles.buttonText}>Switch Camera</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={emitEnd}>
-        <Text style={styles.buttonText}>End Call</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.button, styles.audioButton]}
-        onPress={emitToggleAudio}
-      >
-        <Text style={styles.buttonText}>Audio Only</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonCont}>
+        <TouchableOpacity
+          style={[styles.button, styles.switchButton]}
+          onPress={emitSwitchCamera}
+        >
+          <Text style={styles.buttonText}>Switch Camera</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={emitEnd}>
+          <Text style={styles.buttonText}>End Call</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, styles.audioButton]}
+          onPress={emitToggleAudio}
+        >
+          <Text style={styles.buttonText}>Audio Only</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   ) : (
     <View style={styles.preview}>
@@ -407,26 +409,29 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  button: {
+  buttonCont: {
     position: 'absolute',
+    zIndex: 99,
     bottom: 10,
-    left: 150,
-    marginTop: 30,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    flexDirection: 'row',
+    paddingHorizontal: 30,
+  },
+  button: {
     height: 80,
     width: 80,
     backgroundColor: '#c0392b',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 99,
     borderRadius: 50,
   },
   switchButton: {
-    backgroundColor: '#27ae60',
-    left: 50,
+    backgroundColor: 'rgb(46,103,188)',
   },
   audioButton: {
-    backgroundColor: '#27ae60',
-    left: 250,
+    backgroundColor: 'rgb(46,103,188)',
   },
   buttonText: {
     color: 'white',
