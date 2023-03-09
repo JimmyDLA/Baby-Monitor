@@ -19,13 +19,10 @@ app.get('/', (req, res) => {
   res.send(`${uuid}`)
 })
 
-// app.get('/:freq', (res, req) => {
-//   res.render('freq', { freqID: req.params.freq })
-// })
 const rooms = {}
 
 io.on('connection', socket => {
-  console.log('socket connected!')
+  console.log('socket connected!', socket.id)
 
   socket.on('join-freq', freqID => {
     console.log('join-freq', { freqID })

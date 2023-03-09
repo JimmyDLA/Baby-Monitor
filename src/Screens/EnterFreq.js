@@ -9,9 +9,15 @@ const PendingView = () => (
 )
 
 const EnterFreq = ({ setNav, setGame, saveNewFreq }) => {
-  const [isScanning, setIsScanning] = useState(false)
+  const [isScanning, setIsScanning] = useState(true)
   const [joinFreq, setJoinFreq] = useState('')
   const [QRCodeRead, setQRCodeRead] = useState(false)
+
+  useEffect(() => {
+    return () => {
+      console.log('[INFO] EnterFreq cleanup ')
+    }
+  }, [QRCodeRead])
 
   const handleCreateFreq = () => {
     setGame(true)
@@ -48,25 +54,6 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq }) => {
   }
 
   return isScanning ? (
-    <View style={styles.container}>
-      <View style={styles.buttonCont}>
-        <TouchableOpacity style={styles.button} onPress={handleCamToggle}>
-          <Text style={styles.buttonText}>Scan Frequency</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.inputCont}>
-        <TextInput
-          placeholder="Enter Frequency"
-          onChangeText={handleOnChange}
-          style={styles.input}
-        />
-        <TouchableOpacity style={styles.button} onPress={handleJoinFreq}>
-          <Text style={styles.buttonText}>Join Frequency</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  ) : (
     <View style={[styles.container, { paddingHorizontal: 0 }]}>
       <RNCamera
         style={styles.preview}
@@ -117,6 +104,25 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq }) => {
           )
         }
       </RNCamera>
+    </View>
+  ) : (
+    <View style={styles.container}>
+      <View style={styles.buttonCont}>
+        <TouchableOpacity style={styles.button} onPress={handleCamToggle}>
+          <Text style={styles.buttonText}>Scan Frequency</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.inputCont}>
+        <TextInput
+          placeholder="Enter Frequency"
+          onChangeText={handleOnChange}
+          style={styles.input}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleJoinFreq}>
+          <Text style={styles.buttonText}>Join Frequency</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
