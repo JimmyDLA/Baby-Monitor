@@ -63,7 +63,6 @@ const JoinFreq = ({ room, setNav }) => {
   const audioInterval = useRef()
   const localMediaRef = useRef()
 
-
   const [remoteMediaStream, setRemoteMediaStream] = useState(null)
   const [isVoiceOnly, setIsVoiceOnly] = useState(false)
   const [volumeLevel, setVolumeLevel] = useState(0)
@@ -341,8 +340,8 @@ const JoinFreq = ({ room, setNav }) => {
   const emitToggleAudio = () => {
     console.log('[INFO] JoinFreq emitToggleAudio')
     setIsVoiceOnly(!isVoiceOnly)
-    // socketRef.current.emit('toggle-audio')
-    if (!isVoiceOnly) {
+    socketRef.current.emit('toggle-audio')
+    if (isVoiceOnly) {
       console.log('[INFO] JoinFreq isVoiceOnly')
       setAudioInterval()
     } else {
