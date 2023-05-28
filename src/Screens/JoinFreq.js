@@ -9,11 +9,10 @@ import {
 } from 'react-native-webrtc'
 import Config from 'react-native-config'
 import InCallManager from 'react-native-incall-manager'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Animated } from 'react-native'
 import { useTheme } from '@/Hooks'
 
 const URL = Config.SERVER
-// console.warn(URL)
 
 const mediaConstraints = {
   audio: true,
@@ -21,6 +20,36 @@ const mediaConstraints = {
     frameRate: 30,
     facingMode: 'user',
   },
+}
+const VolumeMeter = props => {
+  const meterAnimated = useRef(new Animated.Value(0)).current // Initial value for opacity: 0
+
+  useEffect(() => {
+    Animated.timing(meterAnimated, {
+      toValue: 4,
+      duration: 100,
+      useNativeDriver: true,
+    }).start()
+  }, [meterAnimated])
+
+  return (
+    <Animated.View // Special animatable View
+      style={{
+        ...props.style,
+        opacity: meterAnimated, // Bind opacity to animated val
+        transform: [
+          {
+            scale: meterAnimated.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, props.volume], // 0 : 150, 0.5 : 75, 1 : 0
+            }),
+          },
+        ],
+      }}
+    >
+      {props.children}
+    </Animated.View>
+  )
 }
 
 const JoinFreq = ({ room, setNav }) => {
@@ -32,10 +61,11 @@ const JoinFreq = ({ room, setNav }) => {
   const otherUser = useRef()
   const sendChannel = useRef() // Data channel
   const audioInterval = useRef()
+  const localMediaRef = useRef()
 
   const [remoteMediaStream, setRemoteMediaStream] = useState(null)
   const [isVoiceOnly, setIsVoiceOnly] = useState(false)
-  const [msg, setMsg] = useState('')
+  const [volumeLevel, setVolumeLevel] = useState(0)
 
   useEffect(() => {
     console.log('[INFO] JoinFreq useEffect', room)
@@ -68,13 +98,17 @@ const JoinFreq = ({ room, setNav }) => {
     socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
 
     socketRef.current.on('end', handleEnd)
+
+    return () => {
+      console.log('[INFO] JoinFreq cleanup ')
+    }
   }, [])
 
   function callUser(userID) {
     // ====================== 6. Initiated a call with Peer() & add peerRef ======================
     console.log('[INFO] JoinFreq Initiated a call')
     peerRef.current = Peer(userID)
-    getMedia()
+    localMediaRef.current = getMedia()
     // sendChannel.current = peerRef.current.createDataChannel('sendChannel')
 
     // listen to incoming messages from other peer
@@ -82,7 +116,7 @@ const JoinFreq = ({ room, setNav }) => {
   }
 
   const getMedia = async () => {
-    let voiceOnly = false
+    let voiceOnly = true
 
     try {
       const mediaStream = await mediaDevices.getUserMedia(mediaConstraints)
@@ -254,10 +288,12 @@ const JoinFreq = ({ room, setNav }) => {
 
   function handleEnd() {
     console.log('[INFO] JoinFreq end')
+    clearAudioInterval()
     setRemoteMediaStream(null)
-
+    peerRef.current._unregisterEvents()
     peerRef.current.close()
     peerRef.current = null
+    socketRef.current.disconnect()
     setNav({ screen: 'Home' })
   }
 
@@ -290,9 +326,10 @@ const JoinFreq = ({ room, setNav }) => {
       for (let value of stats) {
         if (value[1].audioLevel) {
           console.log('[INFO] JoinFreq Stats value', value[1].audioLevel)
+          setVolumeLevel(value[1].audioLevel * 4)
         }
       }
-    }, 500)
+    }, 100)
   }
 
   const clearAudioInterval = () => {
@@ -315,7 +352,7 @@ const JoinFreq = ({ room, setNav }) => {
 
   return remoteMediaStream ? (
     <View style={styles.rtcContainer}>
-      {!isVoiceOnly && (
+      {!isVoiceOnly ? (
         <RTCView
           style={styles.rtcView}
           mirror={true}
@@ -323,6 +360,8 @@ const JoinFreq = ({ room, setNav }) => {
           streamURL={remoteMediaStream.toURL()}
           zOrder={1}
         />
+      ) : (
+        <VolumeMeter volume={volumeLevel} style={styles.volumeMeter} />
       )}
       <View style={styles.buttonCont}>
         <TouchableOpacity
@@ -354,6 +393,7 @@ const styles = {
     width: '100%',
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   rtcView: { width: '100%', height: '100%' },
   input: {
@@ -394,6 +434,12 @@ const styles = {
   },
   buttonText: {
     color: 'white',
+  },
+  volumeMeter: {
+    width: 50,
+    height: 50,
+    backgroundColor: 'red',
+    borderRadius: 50,
   },
 }
 
