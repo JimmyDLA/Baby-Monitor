@@ -38,6 +38,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
   const [localMediaStream, setLocalMediaStream] = useState(null)
 
   useEffect(() => {
+    console.log({ room })
     socketRef.current = io.connect(URL)
     startNewFrequency()
 
