@@ -3,7 +3,9 @@ import { setNav, saveNewFreq } from '../Reducers/frequency'
 import { setGame } from '../Reducers/home'
 import EnterFreq from './EnterFreq'
 // export default ExampleContainer
-const mapStateToProps = (state) => ({})
+const mapStateToProps = ({ frequency: { room } }) => ({
+  room,
+})
 
 const mapDispatchToProps = {
   setNav,
