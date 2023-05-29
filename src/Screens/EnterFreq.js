@@ -8,7 +8,7 @@ const PendingView = () => (
   </View>
 )
 
-const EnterFreq = ({ setNav, setGame, saveNewFreq }) => {
+const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
   const [isScanning, setIsScanning] = useState(true)
   const [joinFreq, setJoinFreq] = useState('')
   const [QRCodeRead, setQRCodeRead] = useState(false)
@@ -53,6 +53,13 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq }) => {
     setIsScanning(!isScanning)
   }
 
+  const handleJoinRecent = () => {
+    if (room) {
+      saveNewFreq(room)
+      setNav({ screen: 'JoinFreq' })
+    }
+  }
+
   return isScanning ? (
     <View style={[styles.container, { paddingHorizontal: 0 }]}>
       <RNCamera
@@ -90,6 +97,14 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq }) => {
                   <View style={styles.middleRight} />
                 </View>
                 <View style={styles.bottom}>
+                  {room && (
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={handleJoinRecent}
+                    >
+                      <Text style={styles.buttonText}>Join Recent</Text>
+                    </TouchableOpacity>
+                  )}
                   <TouchableOpacity
                     style={styles.button}
                     onPress={handleCamToggle}

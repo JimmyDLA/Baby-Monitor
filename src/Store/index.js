@@ -21,7 +21,7 @@ const reducers = combineReducers({
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['theme'],
+  whitelist: ['theme', 'frequency'],
 }
 
 const reducer = persistReducer(persistConfig, reducers)
