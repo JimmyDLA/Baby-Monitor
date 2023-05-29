@@ -9,7 +9,7 @@ import {
 } from 'react-native-webrtc'
 import Config from 'react-native-config'
 import InCallManager from 'react-native-incall-manager'
-import { View, Text, TouchableOpacity, Animated } from 'react-native'
+import { View, Text, TouchableOpacity, Animated, Alert } from 'react-native'
 import { useTheme } from '@/Hooks'
 
 const URL = Config.SERVER
@@ -62,6 +62,7 @@ const JoinFreq = ({ room, setNav }) => {
   const sendChannel = useRef() // Data channel
   const audioInterval = useRef()
   const localMediaRef = useRef()
+  const remoteMediaRef = useRef()
 
   const [remoteMediaStream, setRemoteMediaStream] = useState(null)
   const [isVoiceOnly, setIsVoiceOnly] = useState(false)
@@ -71,7 +72,21 @@ const JoinFreq = ({ room, setNav }) => {
     console.log('[INFO] JoinFreq useEffect', room)
     socketRef.current = io.connect(URL)
     console.log('[INFO] JoinFreq sockeet', socketRef.current)
-
+    setTimeout(() => {
+      console.log('TIMEDOUT: checking remote stream, ', remoteMediaStream)
+      if (!remoteMediaRef.current) {
+        Alert.alert(
+          'Connection Timed-out',
+          'Can not connect to baby room. Please try again.',
+          [
+            {
+              text: 'OK',
+              onPress: () => setNav({ screen: 'EnterFreq' }),
+            },
+          ],
+        )
+      }
+    }, 10000)
     // ====================== 1. Emit joining roomID to server ======================
 
     socketRef.current.emit('join-freq', room)
@@ -162,6 +177,7 @@ const JoinFreq = ({ room, setNav }) => {
 
   async function handleAddStream(event) {
     console.log('[INFO] JoinFreq onaddstream', { event })
+    remoteMediaRef.current = event.stream
     setRemoteMediaStream(event.stream)
     const stats = await peerRef.current.getStats()
     for (let value of stats) {
@@ -383,7 +399,7 @@ const JoinFreq = ({ room, setNav }) => {
     </View>
   ) : (
     <View style={styles.preview}>
-      <Text>JOIN FREQUENCY</Text>
+      <Text>CONNECTING...</Text>
     </View>
   )
 }
