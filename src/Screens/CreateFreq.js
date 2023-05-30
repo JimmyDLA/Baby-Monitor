@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { Alert, View, Text, TouchableOpacity } from 'react-native'
 import {
   RTCPeerConnection,
   RTCSessionDescription,
@@ -12,6 +12,7 @@ import io from 'socket.io-client'
 import 'react-native-get-random-values'
 import { v4 as uuidV4 } from 'uuid'
 import QRCode from 'react-native-qrcode-svg'
+import { useNavigation } from '@react-navigation/native'
 
 const URL = Config.SERVER
 
@@ -36,8 +37,25 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
 
   const [serverMsg, setServerMsg] = useState('')
   const [localMediaStream, setLocalMediaStream] = useState(null)
+  const navigation = useNavigation()
 
   useEffect(() => {
+    navigation.addListener('beforeRemove', e => {
+      // Prevent default behavior of leaving the screen
+      e.preventDefault()
+      // Prompt the user before leaving the screen
+      Alert.alert('Exit?', 'Are you sure you want to leave this screen?', [
+        { text: "Don't leave", style: 'cancel', onPress: () => { } },
+        {
+          text: 'Leave',
+          style: 'destructive',
+          // If the user confirmed, then we dispatch the action we blocked earlier
+          // This will continue the action that had triggered the removal of the screen
+          onPress: () => navigation.dispatch(e.data.action),
+        },
+      ])
+    })
+
     console.log({ room })
     socketRef.current = io.connect(URL)
     startNewFrequency()
