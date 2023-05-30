@@ -23,7 +23,7 @@ const StartupContainer = () => {
 
   useEffect(() => {
     init()
-  })
+  }, [])
 
   return (
     <View style={[Layout.fill, Layout.colCenter]}>
