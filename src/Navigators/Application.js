@@ -37,6 +37,8 @@ const ApplicationNavigator = () => {
             component={CreateFreq}
             options={{
               animationEnabled: true,
+              gestureEnabled: false,
+              headerShown: true,
             }}
           />
           <Stack.Screen
@@ -44,6 +46,7 @@ const ApplicationNavigator = () => {
             component={JoinFreq}
             options={{
               animationEnabled: true,
+              gestureEnabled: false,
             }}
           />
           <Stack.Screen
