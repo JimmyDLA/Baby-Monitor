@@ -38,9 +38,17 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
   const [serverMsg, setServerMsg] = useState('')
   const [localMediaStream, setLocalMediaStream] = useState(null)
   const navigation = useNavigation()
+  const baby = 'baby'
+  let hasEnded = false
+
 
   useEffect(() => {
     navigation.addListener('beforeRemove', e => {
+      console.log({ hasEnded })
+      if (hasEnded) {
+        // If we don't have unsaved changes, then we don't need to do anything
+        return
+      }
       // Prevent default behavior of leaving the screen
       e.preventDefault()
       // Prompt the user before leaving the screen
@@ -60,7 +68,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     socketRef.current = io.connect(URL)
     startNewFrequency()
 
-    socketRef.current.emit('join-freq', room) // Room ID
+    socketRef.current.emit('join-freq', { baby, room }) // Room ID
 
     socketRef.current.on('other-user', userID => {
       console.log('[INFO] createFreq other-user: ', userID)
@@ -266,6 +274,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
   }
 
   function handleEnd() {
+    hasEnded = true
     console.log('[INFO] createFreq End')
     localMediaRef.current.getTracks().map(track => track.stop())
     setLocalMediaStream(null)

@@ -97,14 +97,6 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
                   <View style={styles.middleRight} />
                 </View>
                 <View style={styles.bottom}>
-                  {room && (
-                    <TouchableOpacity
-                      style={styles.button}
-                      onPress={handleJoinRecent}
-                    >
-                      <Text style={styles.buttonText}>Join Recent</Text>
-                    </TouchableOpacity>
-                  )}
                   <TouchableOpacity
                     style={styles.button}
                     onPress={handleCamToggle}
@@ -113,6 +105,14 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
                       Enter Frequency ID Manually
                     </Text>
                   </TouchableOpacity>
+                  {room && (
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={handleJoinRecent}
+                    >
+                      <Text style={styles.buttonText}>Join Recent</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             </View>

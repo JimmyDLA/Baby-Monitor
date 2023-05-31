@@ -52,7 +52,7 @@ const VolumeMeter = props => {
   )
 }
 
-const JoinFreq = ({ room, setNav }) => {
+const JoinFreq = ({ room, setNav, saveNewFreq }) => {
   const { Common, Fonts, Gutters } = useTheme()
 
   console.log('[INFO] JoinFreq room:', room)
@@ -67,6 +67,7 @@ const JoinFreq = ({ room, setNav }) => {
   const [remoteMediaStream, setRemoteMediaStream] = useState(null)
   const [isVoiceOnly, setIsVoiceOnly] = useState(false)
   const [volumeLevel, setVolumeLevel] = useState(0)
+  const parent = 'parent'
 
   useEffect(() => {
     console.log('[INFO] JoinFreq useEffect', room)
@@ -89,7 +90,7 @@ const JoinFreq = ({ room, setNav }) => {
     }, 10000)
     // ====================== 1. Emit joining roomID to server ======================
 
-    socketRef.current.emit('join-freq', room)
+    socketRef.current.emit('join-freq', { parent, room })
 
     // ====================== 4. Add Listener for server if there is another user in room ======================
     socketRef.current.on('other-user', userID => {
@@ -303,6 +304,7 @@ const JoinFreq = ({ room, setNav }) => {
   }
 
   function handleEnd() {
+    saveNewFreq('')
     console.log('[INFO] JoinFreq end')
     clearAudioInterval()
     setRemoteMediaStream(null)
@@ -314,7 +316,7 @@ const JoinFreq = ({ room, setNav }) => {
   }
 
   function emitEnd() {
-    socketRef.current.emit('end')
+    socketRef.current.emit('end', room)
   }
 
   function handleNewICECandidateMsg(incoming) {
