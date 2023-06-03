@@ -1,5 +1,9 @@
 import React from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Text, View, Image } from 'react-native'
+import { ScreenContainer } from '../Components/ScreenContainer'
+import { Button } from '../Components/Button'
+import { Font, FontFam, Size } from '@/Theme/Theme'
+import logo from '../../assets/images/Logo_Name.png'
 
 const Home = ({ setNav, setGame }) => {
   const handleCreateFreq = () => {
@@ -11,48 +15,41 @@ const Home = ({ setNav, setGame }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={handleCreateFreq}>
-        <Text style={styles.buttonText}>Create Frequency</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handleJoinFreq}>
-        <Text style={styles.buttonText}>Join Frequency</Text>
-      </TouchableOpacity>
-    </View>
+    <ScreenContainer>
+      <View style={styles.container}>
+        <View style={styles.top}>
+          <Image resizeMode="cover" source={logo} style={styles.img} />
+          <Text style={styles.text}>
+            Welcome to Baby Monitor. Now its easier than ever to monitor your
+            baby while they sleep. Just use any mobile device like your phone,
+            and/or laptop.
+          </Text>
+        </View>
+        <View>
+          <Button onPress={handleCreateFreq} text="Baby's Room" primary />
+          <Button onPress={handleJoinFreq} text="Parent's Room" secondary />
+        </View>
+      </View>
+    </ScreenContainer>
   )
 }
 
 const styles = {
   container: {
-    width: '100%',
-    backgroundColor: 'gray',
-    flex: 1,
-    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+    height: '100%',
   },
-  button: {
-    marginTop: 30,
-    height: 65,
-    width: '100%',
-    backgroundColor: 'rgb(46,103,188)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
+  text: {
+    fontFamily: FontFam.kaisei,
+    fontSize: Font.regular,
+    paddingTop: Size.xxlarge,
   },
-  buttonText: {
-    color: 'white',
+  top: {
+    paddingTop: Size.xxlarge,
   },
-  input: {
-    width: 200,
-    height: 50,
-    borderColor: 'white',
-    borderWidth: 2,
-    marginVertical: 10,
-    padding: 10,
-    color: 'white',
-  },
-  preview: {
-    flex: 1,
-    alignItems: 'center',
+  img: {
+    width: 235,
+    height: 185,
   },
 }
 

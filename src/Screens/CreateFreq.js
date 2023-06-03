@@ -41,7 +41,6 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
   const baby = 'baby'
   let hasEnded = false
 
-
   useEffect(() => {
     navigation.addListener('beforeRemove', e => {
       console.log({ hasEnded })
