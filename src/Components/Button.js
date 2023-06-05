@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, TouchableOpacity } from 'react-native'
 import { Color, Size, FontFam, Font } from '../Theme/Theme'
 
-export const Button = ({ onPress, text, primary, secondary, icon }) => {
+export const Button = ({ onPress, text, primary, secondary }) => {
   return (
     <TouchableOpacity
       style={[
@@ -14,7 +14,7 @@ export const Button = ({ onPress, text, primary, secondary, icon }) => {
       <Text
         style={[
           styles.buttonText,
-          { color: primary ? Color.white : Color.black },
+          { color: secondary ? Color.black : Color.white },
         ]}
       >
         {text}
@@ -26,8 +26,7 @@ export const Button = ({ onPress, text, primary, secondary, icon }) => {
 const styles = {
   button: {
     paddingHorizontal: Size.regular,
-    backgroundColor: Color.background,
-    borderRadius: Size.small,
+    borderRadius: Size.xxlarge,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',

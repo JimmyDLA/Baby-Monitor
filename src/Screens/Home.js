@@ -1,7 +1,6 @@
 import React from 'react'
 import { Text, View, Image } from 'react-native'
-import { ScreenContainer } from '../Components/ScreenContainer'
-import { Button } from '../Components/Button'
+import { Button, ScreenContainer } from '../Components'
 import { Font, FontFam, Size } from '@/Theme/Theme'
 import logo from '../../assets/images/Logo_Name.png'
 
@@ -52,7 +51,7 @@ const styles = {
   },
   img: {
     width: 235,
-    height: 185,
+    height: 186,
   },
 }
 
