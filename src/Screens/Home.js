@@ -1,91 +1,58 @@
-import React, { useState, useEffect } from 'react'
-import { Text, TextInput, TouchableOpacity, ScrollView } from 'react-native'
-import axios from 'axios'
-import { useTheme } from '@/Hooks'
+import React from 'react'
+import { Text, View, Image } from 'react-native'
+import { ScreenContainer } from '../Components/ScreenContainer'
+import { Button } from '../Components/Button'
+import { Font, FontFam, Size } from '@/Theme/Theme'
+import logo from '../../assets/images/Logo_Name.png'
 
-const URL = 'http://localhost:3000'
-
-const Home = ({ setNav, setGame, saveNewFreq }) => {
-  const { Common, Fonts, Gutters, Layout } = useTheme()
-  const [freq, setFreq] = useState('')
-  const [joinFreq, setJoinFreq] = useState('')
-
-  useEffect(() => {
-    console.log('useEffect')
-  }, [])
-
-  const getUuid = () => {
-    axios({ method: 'get', url: URL })
-      .then(response => {
-        setFreq(response.data)
-      })
-      .catch(err => console.log(err))
-  }
-
+const Home = ({ setNav, setGame }) => {
   const handleCreateFreq = () => {
     setGame(true)
   }
 
   const handleJoinFreq = () => {
-    saveNewFreq(joinFreq)
-    setNav({ screen: 'JoinFreq', params: joinFreq })
-  }
-
-  const handleOnChange = e => {
-    setJoinFreq(e)
+    setNav({ screen: 'EnterFreq' })
   }
 
   return (
-    <ScrollView
-      style={Layout.fill}
-      contentContainerStyle={[
-        Layout.fill,
-        Layout.colCenter,
-        Gutters.smallHPadding,
-      ]}
-    >
-      <TouchableOpacity
-        style={[Common.button.outline, Gutters.regularBMargin]}
-        onPress={handleCreateFreq}
-      >
-        <Text style={Fonts.textRegular}>Open Freq</Text>
-      </TouchableOpacity>
-      <Text>{freq}</Text>
-
-      <Text>OR</Text>
-
-      <TextInput
-        placeholder="placeholder"
-        onChangeText={handleOnChange}
-        style={styles.input}
-      />
-      <TouchableOpacity
-        style={[Common.button.outline, Gutters.regularBMargin]}
-        onPress={handleJoinFreq}
-      >
-        <Text style={Fonts.textRegular}>Join Freq</Text>
-      </TouchableOpacity>
-      <Text>{joinFreq}</Text>
-    </ScrollView>
+    <ScreenContainer>
+      <View style={styles.container}>
+        <View style={styles.top}>
+          <Image resizeMode="cover" source={logo} style={styles.img} />
+          <Text style={styles.text}>
+            Welcome to Baby Monitor. Now its easier than ever to monitor your
+            baby while they sleep. Just use any mobile device like your phone,
+            tablet, or laptop.
+          </Text>
+        </View>
+        <View>
+          <Button onPress={handleCreateFreq} text="Baby's Room" primary />
+          <Button onPress={handleJoinFreq} text="Parent's Room" secondary />
+        </View>
+      </View>
+    </ScreenContainer>
   )
 }
 
 const styles = {
-  input: {
-    width: 200,
-    height: 30,
-    borderColor: 'black',
-    borderWidth: 2,
-    marginVertical: 10,
+  container: {
+    justifyContent: 'space-between',
+    height: '100%',
+    paddingBottom: Size.large,
   },
-  preview: {
-    flex: 1,
+  text: {
+    fontFamily: FontFam.kaisei,
+    fontSize: Font.regular,
+    paddingTop: Size.xlarge,
+    textAlign: 'center',
+  },
+  top: {
+    paddingTop: Size.xlarge,
     alignItems: 'center',
   },
-  container: {
-    width: '100%',
-    height: 300,
-    backgroundColor: 'white',
+  img: {
+    width: 235,
+    height: 185,
   },
 }
 

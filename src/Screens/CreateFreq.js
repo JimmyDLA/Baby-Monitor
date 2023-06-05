@@ -1,59 +1,131 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, Text } from 'react-native'
+import { Alert, View, Text, TouchableOpacity } from 'react-native'
 import {
   RTCPeerConnection,
   RTCSessionDescription,
   RTCIceCandidate,
+  mediaDevices,
 } from 'react-native-webrtc'
+import Config from 'react-native-config'
+import InCallManager from 'react-native-incall-manager'
 import io from 'socket.io-client'
 import 'react-native-get-random-values'
 import { v4 as uuidV4 } from 'uuid'
+import QRCode from 'react-native-qrcode-svg'
+import { useNavigation } from '@react-navigation/native'
 
-const URL = 'http://localhost:3000'
-const room = uuidV4()
+const URL = Config.SERVER
 
-const CreateFreq = ({ startNewFrequency }) => {
+const mediaConstraints = {
+  // don't know if noise suppression actually work as is
+  noiseSuppression: false,
+  audio: true,
+  video: {
+    frameRate: 30,
+    facingMode: 'user',
+  },
+}
+
+const CreateFreq = ({ setNav, startNewFrequency }) => {
+  const room = uuidV4()
   const peerRef = useRef()
   const socketRef = useRef()
   const otherUser = useRef()
   const sendChannel = useRef() // Data channel
+  const localMediaRef = useRef()
+  const isVoiceOnly = useRef(false)
 
   const [serverMsg, setServerMsg] = useState('')
+  const [localMediaStream, setLocalMediaStream] = useState(null)
+  const navigation = useNavigation()
+  const baby = 'baby'
+  let hasEnded = false
+
   useEffect(() => {
-    console.log('create freq useEffect', room)
+    navigation.addListener('beforeRemove', e => {
+      console.log({ hasEnded })
+      if (hasEnded) {
+        // If we don't have unsaved changes, then we don't need to do anything
+        return
+      }
+      // Prevent default behavior of leaving the screen
+      e.preventDefault()
+      // Prompt the user before leaving the screen
+      Alert.alert('Exit?', 'Are you sure you want to leave this screen?', [
+        { text: "Don't leave", style: 'cancel', onPress: () => { } },
+        {
+          text: 'Leave',
+          style: 'destructive',
+          // If the user confirmed, then we dispatch the action we blocked earlier
+          // This will continue the action that had triggered the removal of the screen
+          onPress: () => navigation.dispatch(e.data.action),
+        },
+      ])
+    })
+
+    console.log({ room })
     socketRef.current = io.connect(URL)
     startNewFrequency()
-    // console.log({ room })
-    socketRef.current.emit('join-freq', room) // Room ID
+
+    socketRef.current.emit('join-freq', { baby, room }) // Room ID
 
     socketRef.current.on('other-user', userID => {
-      console.log('other-user: ', userID)
-      callUser(userID)
+      console.log('[INFO] createFreq other-user: ', userID)
+      // callUser(userID)
       otherUser.current = userID
+      // peerRef.current.addStream(localMediaStream)
     })
     // Signals that both peers have joined the room
     socketRef.current.on('user-joined', userID => {
+      console.log('[INFO] createFreq user-joined: ', userID)
       otherUser.current = userID
+      // callUser(userID)
     })
-
+    // ====================== 13. Add listener for icoming offers ======================
     socketRef.current.on('offer', handleOffer)
-
     socketRef.current.on('answer', handleAnswer)
-
     socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
+    socketRef.current.on('switch-camera', handleSwitch)
+    socketRef.current.on('toggle-audio', handleOnAndOffCamera)
+    socketRef.current.on('end', handleEnd)
+
+    return () => {
+      console.log('[INFO] createFreq cleanup ')
+      socketRef.current.disconnect()
+    }
   }, [])
 
-  function callUser(userID) {
-    // This will initiate the call for the receiving peer
-    console.log('[INFO] Initiated a call')
-    peerRef.current = Peer(userID)
-    sendChannel.current = peerRef.current.createDataChannel('sendChannel')
+  const getMedia = async () => {
+    let voiceOnly = false
 
-    // listen to incoming messages from other peer
-    sendChannel.current.onmessage = handleReceiveMessage
+    try {
+      const mediaStream = await mediaDevices.getUserMedia(mediaConstraints)
+
+      if (voiceOnly) {
+        let videoTrack = await mediaStream.getVideoTracks()[0]
+        videoTrack.enabled = false
+      }
+      InCallManager.setForceSpeakerphoneOn(true)
+
+      return mediaStream
+    } catch (err) {
+      // Handle Error
+      console.log({ err })
+    }
   }
 
+  // function callUser(userID) {
+  //   // This will initiate the call for the receiving peer
+  //   console.log('[INFO] createFreq Initiated a call')
+  //   peerRef.current = Peer(userID)
+  //   sendChannel.current = peerRef.current.createDataChannel('sendChannel')
+
+  //   // listen to incoming messages from other peer
+  //   sendChannel.current.onmessage = handleReceiveMessage
+  // }
+
   function Peer(userID) {
+    console.log('[INFO] createFreq Peer')
     /*
       Here we are using Turn and Stun server
       (ref: https://blog.ivrpowers.com/post/technologies/what-is-stun-turn-server/)
@@ -62,41 +134,67 @@ const CreateFreq = ({ startNewFrequency }) => {
     const peer = new RTCPeerConnection({
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
     })
+    // =========== 21. Add listener on ice candidate once done setting all descps ============
     peer.onicecandidate = handleICECandidateEvent
-    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID)
+    peer.ontrack = handleTrackEvnet
+    // peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID)
+    peer.onsignalingstatechange = event => {
+      console.log('[STAT] createFreq signal', peerRef.current.signalingState)
+    }
+    peer.ondatachannel = async event => {
+      sendChannel.current = event.channel
+      sendChannel.current.onmessage = handleReceiveMessage
+      console.log('[SUCCESS] createFreq Connection established')
+    }
     return peer
   }
 
   function handleNegotiationNeededEvent(userID) {
+    // console.log('[INFO] createFreq handleNegotiationNeededEvent')
     // Offer made by the initiating peer to the receiving peer.
-    peerRef.current
-      .createOffer()
+    let sessionConstraints = {
+      mandatory: {
+        OfferToReceiveAudio: true,
+        OfferToReceiveVideo: true,
+        VoiceActivityDetection: true,
+      },
+    }
+
+    // eslint-disable-next-line prettier/prettier
+    peerRef.current.createOffer(sessionConstraints)
       .then(offer => {
         return peerRef.current.setLocalDescription(offer)
       })
       .then(() => {
         const payload = {
-          target: userID,
+          target: otherUser.current,
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         }
+        console.log('[INFO] createFreq handleNegotiationNeededEvent')
         socketRef.current.emit('offer', payload)
       })
       .catch(err => console.log('Error handling negotiation needed event', err))
   }
 
-  function handleOffer(incoming) {
+  async function handleOffer(incoming) {
+    // ====================== 14. Handle offer ======================
     /*
       Here we are exchanging config information
       between the peers to establish communication
     */
-    console.log('[INFO] Handling Offer')
-    peerRef.current = Peer()
-    peerRef.current.ondatachannel = event => {
-      sendChannel.current = event.channel
-      sendChannel.current.onmessage = handleReceiveMessage
-      console.log('[SUCCESS] Connection established')
+
+    let sessionConstraints = {
+      mandatory: {
+        OfferToReceiveAudio: true,
+        OfferToReceiveVideo: true,
+        VoiceActivityDetection: true,
+      },
     }
+
+    peerRef.current = Peer()
+    localMediaRef.current = await getMedia()
+    setLocalMediaStream(localMediaRef.current)
 
     /*
       Session Description: It is the config information of the peer
@@ -109,10 +207,13 @@ const CreateFreq = ({ startNewFrequency }) => {
       Remote Description : Information about the other peer
       Local Description: Information about you 'current peer'
     */
+    // ====================== 15. Answer, save remote & local descp ======================
 
-    peerRef.current
-      .setRemoteDescription(desc)
-      .then(() => { })
+    // eslint-disable-next-line prettier/prettier
+    peerRef.current.setRemoteDescription(desc)
+      .then(() => {
+        peerRef.current.addStream(localMediaRef.current)
+      })
       .then(() => {
         return peerRef.current.createAnswer()
       })
@@ -125,13 +226,15 @@ const CreateFreq = ({ startNewFrequency }) => {
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         }
+        // ====================== 16. Emit answer payload to server ======================
         socketRef.current.emit('answer', payload)
       })
+      .catch(e => console.log('[ERROR] ', e))
   }
 
   function handleAnswer(message) {
     // Handle answer by the receiving peer
-    console.log('[INFO] Handling Answer, Message:', message)
+    console.log('[INFO] createFreq Handling Answer', message)
     const desc = new RTCSessionDescription(message.sdp)
     peerRef.current
       .setRemoteDescription(desc)
@@ -140,21 +243,12 @@ const CreateFreq = ({ startNewFrequency }) => {
 
   function handleReceiveMessage(e) {
     // Listener for receiving messages from the peer
-    console.log('[INFO] Message received from peer', e.data)
+    console.log('[INFO] createFreq Message received from peer', e.data)
     setServerMsg(e.data)
-    // const msg = [{
-    //   _id: Math.random(1000).toString(),
-    //   text: e.data,
-    //   createdAt: new Date(),
-    //   user: {
-    //     _id: 2,
-    //   },
-    // }]
-    // setMessages(previousMessages => GiftedChat.append(previousMessages, msg))
   }
 
   function handleICECandidateEvent(e) {
-    console.log('[INFO] Handling ICE Candidate Event')
+    console.log('[INFO] createFreq handleICECandidateEvent')
 
     /*
       ICE stands for Interactive Connectivity Establishment. Using this
@@ -167,28 +261,96 @@ const CreateFreq = ({ startNewFrequency }) => {
       const payload = {
         target: otherUser.current,
         candidate: e.candidate,
+        origin: socketRef.current.id,
       }
+      // =========== 22. Emit to server ice candidate ============
       socketRef.current.emit('ice-candidate', payload)
     }
   }
 
+  function handleTrackEvnet(e) {
+    console.log('[INFO] createFreq handleTrackEvnet', e)
+  }
+
+  function handleEnd() {
+    hasEnded = true
+    console.log('[INFO] createFreq End')
+    localMediaRef.current.getTracks().map(track => track.stop())
+    setLocalMediaStream(null)
+    peerRef.current._unregisterEvents()
+    peerRef.current.close()
+    peerRef.current = null
+    socketRef.current.disconnect()
+    setNav({ screen: 'Home' })
+  }
+
+  async function handleSwitch() {
+    console.log('[INFO] createFreq handleSwitch')
+    let cameraCount = 0
+
+    try {
+      const devices = await mediaDevices.enumerateDevices()
+
+      devices.map(device => {
+        if (device.kind !== 'videoinput') {
+          return
+        }
+
+        cameraCount = cameraCount + 1
+      })
+    } catch (err) {
+      // Handle Error
+      console.log('[ERR] createFreq handleSwitch error')
+    }
+    console.log('[INFO] createFreq', { cameraCount })
+
+    if (cameraCount > 1) {
+      let videoTrack = await localMediaRef.current.getVideoTracks()[0]
+      videoTrack._switchCamera()
+    }
+  }
+
+  async function handleOnAndOffCamera() {
+    console.log('[INFO] createFreq handleOnAndOffCamera', !isVoiceOnly.current)
+    let videoTrack = await localMediaRef.current.getVideoTracks()[0]
+    videoTrack.enabled = isVoiceOnly.current
+    isVoiceOnly.current = !isVoiceOnly.current
+    // setIsVoiceOnly(!isVoiceOnl.cuy)
+  }
+
   function handleNewICECandidateMsg(incoming) {
-    console.log('[INFO] Handling New ICE Candidate Msg')
+    console.log('[INFO] createFreq handleNewICECandidateMsg')
 
     const candidate = new RTCIceCandidate(incoming)
 
     peerRef.current.addIceCandidate(candidate).catch(e => console.log(e))
   }
 
-  return (
+  return !localMediaStream ? (
     <View style={styles.preview}>
-      <Text>CREATE FREQUENCY</Text>
-      <Text>Incoming: {serverMsg}</Text>
+      <Text style={styles.text}>Scan QR Code to join Frequency</Text>
+      <QRCode size={200} value={room} />
+      <Text style={styles.text}>OR</Text>
+      <Text style={styles.text}>Type frequncy ID to join:</Text>
+      <Text style={styles.text}>{room}</Text>
+    </View>
+  ) : (
+    <View style={styles.preview}>
+      <TouchableOpacity style={styles.button} onPress={handleSwitch}>
+        <Text style={styles.buttonText}>Switch Camera</Text>
+      </TouchableOpacity>
     </View>
   )
 }
 
 const styles = {
+  rtcContainer: {
+    width: '100%',
+    height: 300,
+    alignItems: 'center',
+    backgroundColor: 'pink',
+  },
+  rtcView: { width: '100%', height: '100%' },
   input: {
     width: 200,
     height: 30,
@@ -199,13 +361,28 @@ const styles = {
   preview: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    // backgroundColor: 'pink',
+    justifyContent: 'space-around',
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
   },
   container: {
     width: '100%',
     height: 300,
     backgroundColor: 'white',
+  },
+  text: {
+    fontSize: 20,
+  },
+  button: {
+    marginTop: 30,
+    height: 65,
+    width: '100%',
+    backgroundColor: 'rgb(46,103,188)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: 'white',
   },
 }
 

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { setNav } from '../Reducers/frequency'
+import { setNav, saveNewFreq } from '../Reducers/frequency'
 import JoinFreq from './JoinFreq'
 // export default ExampleContainer
 const mapStateToProps = ({ frequency: { room } }) => ({
@@ -8,6 +8,7 @@ const mapStateToProps = ({ frequency: { room } }) => ({
 
 const mapDispatchToProps = {
   setNav,
+  saveNewFreq,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps, null, {

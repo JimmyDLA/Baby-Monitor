@@ -1,49 +1,61 @@
 import React from 'react'
-import { SafeAreaView, StatusBar } from 'react-native'
+import { StatusBar } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
-import { StartupContainer, CreateFreq, JoinFreq } from '../Screens'
+import {
+  StartupContainer,
+  CreateFreq,
+  JoinFreq,
+  EnterFreq,
+  Home,
+} from '../Screens'
 import { useTheme } from '@/Hooks'
-import MainNavigator from './Main'
 import { navigationRef } from './utils'
 
 const Stack = createStackNavigator()
 
 // @refresh reset
 const ApplicationNavigator = () => {
-  const { Layout, darkMode, NavigationTheme } = useTheme()
-  const { colors } = NavigationTheme
+  const { darkMode, NavigationTheme } = useTheme()
 
   return (
-    <SafeAreaView style={[Layout.fill, { backgroundColor: colors.card }]}>
-      <NavigationContainer theme={NavigationTheme} ref={navigationRef}>
-        <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Startup" component={StartupContainer} />
-          <Stack.Screen
-            name="Main"
-            component={MainNavigator}
-            options={{
-              animationEnabled: false,
-            }}
-          />
-          <Stack.Screen
-            name="CreateFreq"
-            component={CreateFreq}
-            options={{
-              animationEnabled: true,
-            }}
-          />
-          <Stack.Screen
-            name="JoinFreq"
-            component={JoinFreq}
-            options={{
-              animationEnabled: true,
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaView>
+    <NavigationContainer theme={NavigationTheme} ref={navigationRef}>
+      <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Startup" component={StartupContainer} />
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{
+            animationEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="CreateFreq"
+          component={CreateFreq}
+          options={{
+            animationEnabled: true,
+            gestureEnabled: false,
+            headerShown: true,
+          }}
+        />
+        <Stack.Screen
+          name="JoinFreq"
+          component={JoinFreq}
+          options={{
+            animationEnabled: true,
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="EnterFreq"
+          component={EnterFreq}
+          options={{
+            animationEnabled: true,
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   )
 }
 
