@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
+import { Text, View, Alert } from 'react-native'
 import { RNCamera } from 'react-native-camera'
-import { ScreenContainer } from '../Components/ScreenContainer'
-import { Button } from '../Components/Button'
+import { Input, Button, ScreenContainer } from '../Components'
 import { Font, FontFam, Color, Size } from '@/Theme/Theme'
 
 const PendingView = () => (
@@ -126,11 +125,7 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
       </View>
 
       <View style={styles.inputCont}>
-        <TextInput
-          placeholder="Enter Frequency"
-          onChangeText={handleOnChange}
-          style={styles.input}
-        />
+        <Input placeholder="Entre Room ID" onChange={handleOnChange} />
         <Button secondary text="Join Frequency" onPress={handleJoinFreq} />
       </View>
     </ScreenContainer>
