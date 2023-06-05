@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
 import { RNCamera } from 'react-native-camera'
+import { ScreenContainer } from '../Components/ScreenContainer'
+import { Button } from '../Components/Button'
+import { Font, FontFam, Color, Size } from '@/Theme/Theme'
 
 const PendingView = () => (
   <View style={styles.waiting}>
@@ -97,21 +100,17 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
                   <View style={styles.middleRight} />
                 </View>
                 <View style={styles.bottom}>
-                  <TouchableOpacity
-                    style={styles.button}
+                  <Button
+                    primary
+                    text="Enter Frequency ID Manually"
                     onPress={handleCamToggle}
-                  >
-                    <Text style={styles.buttonText}>
-                      Enter Frequency ID Manually
-                    </Text>
-                  </TouchableOpacity>
+                  />
                   {room && (
-                    <TouchableOpacity
-                      style={styles.button}
+                    <Button
+                      secondary
+                      text="Join Recent"
                       onPress={handleJoinRecent}
-                    >
-                      <Text style={styles.buttonText}>Join Recent</Text>
-                    </TouchableOpacity>
+                    />
                   )}
                 </View>
               </View>
@@ -121,11 +120,9 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
       </RNCamera>
     </View>
   ) : (
-    <View style={styles.container}>
+    <ScreenContainer>
       <View style={styles.buttonCont}>
-        <TouchableOpacity style={styles.button} onPress={handleCamToggle}>
-          <Text style={styles.buttonText}>Scan Frequency</Text>
-        </TouchableOpacity>
+        <Button primary text="Scan Frequency" onPress={handleCamToggle} />
       </View>
 
       <View style={styles.inputCont}>
@@ -134,11 +131,9 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
           onChangeText={handleOnChange}
           style={styles.input}
         />
-        <TouchableOpacity style={styles.button} onPress={handleJoinFreq}>
-          <Text style={styles.buttonText}>Join Frequency</Text>
-        </TouchableOpacity>
+        <Button secondary text="Join Frequency" onPress={handleJoinFreq} />
       </View>
-    </View>
+    </ScreenContainer>
   )
 }
 
@@ -224,9 +219,10 @@ const styles = {
     paddingHorizontal: 30,
   },
   instruction: {
-    marginBottom: 30,
-    color: 'white',
-    fontSize: 20,
+    marginBottom: Size.xlarge,
+    color: Color.white,
+    fontSize: Font.regular,
+    fontFamily: FontFam.kaisei,
   },
 }
 
