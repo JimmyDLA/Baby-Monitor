@@ -22,7 +22,7 @@ const Home = ({ setNav, setGame }) => {
           <Text style={styles.text}>
             Welcome to Baby Monitor. Now its easier than ever to monitor your
             baby while they sleep. Just use any mobile device like your phone,
-            and/or laptop.
+            tablet, or laptop.
           </Text>
         </View>
         <View>
@@ -38,14 +38,17 @@ const styles = {
   container: {
     justifyContent: 'space-between',
     height: '100%',
+    paddingBottom: Size.large,
   },
   text: {
     fontFamily: FontFam.kaisei,
     fontSize: Font.regular,
-    paddingTop: Size.xxlarge,
+    paddingTop: Size.xlarge,
+    textAlign: 'center',
   },
   top: {
-    paddingTop: Size.xxlarge,
+    paddingTop: Size.xlarge,
+    alignItems: 'center',
   },
   img: {
     width: 235,
