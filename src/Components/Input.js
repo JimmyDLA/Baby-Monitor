@@ -7,6 +7,7 @@ export const Input = ({ placeholder, onChange }) => {
     <TextInput
       onChangeText={onChange}
       placeholder={placeholder}
+      placeholderTextColor={Color.gray}
       style={styles.input}
       autoCapitalize="none"
       autoComplete="off"

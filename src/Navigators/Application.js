@@ -20,7 +20,7 @@ const ApplicationNavigator = () => {
 
   return (
     <NavigationContainer theme={NavigationTheme} ref={navigationRef}>
-      <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle={'dark-content'} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Startup" component={StartupContainer} />
         <Stack.Screen
@@ -36,7 +36,6 @@ const ApplicationNavigator = () => {
           options={{
             animationEnabled: true,
             gestureEnabled: false,
-            headerShown: true,
           }}
         />
         <Stack.Screen

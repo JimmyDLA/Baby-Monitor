@@ -6,6 +6,7 @@ export const Color = {
   transparent: 'rgba(0,0,0,0)',
   white: '#ffffff',
   black: '#000000',
+  gray: '#7B7B7B',
   text: '#212529',
   primary: '#19C085',
   secondary: '#FFD365',
