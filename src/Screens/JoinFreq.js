@@ -9,8 +9,13 @@ import {
 } from 'react-native-webrtc'
 import Config from 'react-native-config'
 import InCallManager from 'react-native-incall-manager'
-import { View, Text, TouchableOpacity, Animated, Alert } from 'react-native'
-import { useTheme } from '@/Hooks'
+import { View, Text, Animated, Alert } from 'react-native'
+import cameraOffIcon from '../../assets/images/Camera_off_icon.png'
+import cameraOnIcon from '../../assets/images/Camera_on_icon.png'
+import endIcon from '../../assets/images/End_call_icon.png'
+import switchCam from '../../assets/images/Switch_cam_icon.png'
+import { Font, FontFam, Color } from '@/Theme/Theme'
+import { Button, ScreenContainer } from '../Components'
 
 const URL = Config.SERVER
 
@@ -53,8 +58,6 @@ const VolumeMeter = props => {
 }
 
 const JoinFreq = ({ room, setNav, saveNewFreq }) => {
-  const { Common, Fonts, Gutters } = useTheme()
-
   console.log('[INFO] JoinFreq room:', room)
   const peerRef = useRef()
   const socketRef = useRef()
@@ -382,27 +385,17 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
         <VolumeMeter volume={volumeLevel} style={styles.volumeMeter} />
       )}
       <View style={styles.buttonCont}>
-        <TouchableOpacity
-          style={[styles.button, styles.switchButton]}
-          onPress={emitSwitchCamera}
-        >
-          <Text style={styles.buttonText}>Switch Camera</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={emitEnd}>
-          <Text style={styles.buttonText}>End Call</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.audioButton]}
-          onPress={emitToggleAudio}
-        >
-          <Text style={styles.buttonText}>Audio Only</Text>
-        </TouchableOpacity>
+        <Button primary icon={switchCam} onPress={emitSwitchCamera} />
+        <Button secondary icon={endIcon} onPress={emitEnd} />
+        <Button primary icon={cameraOffIcon} onPress={emitToggleAudio} />
       </View>
     </View>
   ) : (
-    <View style={styles.preview}>
-      <Text>CONNECTING...</Text>
-    </View>
+    <ScreenContainer>
+      <View style={styles.preview}>
+        <Text style={styles.connecting}>CONNECTING...</Text>
+      </View>
+    </ScreenContainer>
   )
 }
 
@@ -422,36 +415,24 @@ const styles = {
     marginVertical: 10,
   },
   preview: {
-    flex: 1,
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonCont: {
     position: 'absolute',
     zIndex: 99,
-    bottom: 10,
+    bottom: 40,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-around',
     flexDirection: 'row',
     paddingHorizontal: 30,
   },
-  button: {
-    height: 80,
-    width: 80,
-    backgroundColor: '#c0392b',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 50,
-  },
-  switchButton: {
-    backgroundColor: 'rgb(46,103,188)',
-  },
-  audioButton: {
-    backgroundColor: 'rgb(46,103,188)',
-  },
-  buttonText: {
-    color: 'white',
+  connecting: {
+    fontFamily: FontFam.kaisei,
+    fontSize: Font.regular,
+    color: Color.black,
   },
   volumeMeter: {
     width: 50,
