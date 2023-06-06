@@ -1,15 +1,13 @@
 import React, { useEffect } from 'react'
-import { ActivityIndicator, View, Text } from 'react-native'
-import { useTranslation } from 'react-i18next'
+import { Image, View } from 'react-native'
 import { useTheme } from '@/Hooks'
-import { Brand } from '@/Components'
 import { setDefaultTheme } from '@/Store/Theme'
 import { navigate } from '@/Navigators/utils'
+import { Size } from '../Theme/Theme'
+import launchScreen from '../../assets/images/Launch_screen.png'
 
 const StartupContainer = () => {
-  const { Layout, Gutters, Fonts } = useTheme()
-
-  const { t } = useTranslation()
+  const { Layout } = useTheme()
 
   const init = async () => {
     await new Promise(resolve =>
@@ -27,11 +25,16 @@ const StartupContainer = () => {
 
   return (
     <View style={[Layout.fill, Layout.colCenter]}>
-      <Brand />
-      <ActivityIndicator size={'large'} style={[Gutters.largeVMargin]} />
-      <Text style={Fonts.textCenter}>{t('welcome')}</Text>
+      <Image style={styles.img} source={launchScreen} />
     </View>
   )
+}
+
+const styles = {
+  img: {
+    height: Size.full,
+    width: Size.full,
+  },
 }
 
 export default StartupContainer

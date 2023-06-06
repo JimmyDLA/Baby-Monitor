@@ -71,6 +71,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
   const [isVoiceOnly, setIsVoiceOnly] = useState(false)
   const [volumeLevel, setVolumeLevel] = useState(0)
   const parent = 'parent'
+  const camIcon = isVoiceOnly ? cameraOnIcon : cameraOffIcon
 
   useEffect(() => {
     console.log('[INFO] JoinFreq useEffect', room)
@@ -85,7 +86,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
           [
             {
               text: 'OK',
-              onPress: () => setNav({ screen: 'EnterFreq' }),
+              onPress: () => setNav({ screen: 'Home' }),
             },
           ],
         )
@@ -387,7 +388,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
       <View style={styles.buttonCont}>
         <Button primary icon={switchCam} onPress={emitSwitchCamera} />
         <Button secondary icon={endIcon} onPress={emitEnd} />
-        <Button primary icon={cameraOffIcon} onPress={emitToggleAudio} />
+        <Button primary icon={camIcon} onPress={emitToggleAudio} />
       </View>
     </View>
   ) : (
