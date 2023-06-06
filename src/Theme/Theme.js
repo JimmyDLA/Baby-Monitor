@@ -25,6 +25,7 @@ const xlarge = regular * 2 // 30
 const xxlarge = regular * 3 // 45
 const xxxlarge = large * 3 // 60
 const xxxxlarge = xlarge * 3 // 90
+const full = '100%' // 100% of parent
 
 export const Size = {
   xsmall,
@@ -35,6 +36,7 @@ export const Size = {
   xxlarge,
   xxxlarge,
   xxxxlarge,
+  full,
 }
 
 /**

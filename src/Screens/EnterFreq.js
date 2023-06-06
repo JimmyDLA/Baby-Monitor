@@ -88,7 +88,7 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
               <View style={styles.outterContainer}>
                 <View style={styles.top}>
                   <Text style={styles.instruction}>
-                    Scan QR code to join frequency
+                    Scan QR code to join room
                   </Text>
                 </View>
                 <View style={styles.middle}>
@@ -98,7 +98,7 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
                 <View style={styles.bottom}>
                   <Button
                     primary
-                    text="Enter Frequency ID Manually"
+                    text="Enter Room ID Manually"
                     onPress={handleCamToggle}
                   />
                   {room && (
