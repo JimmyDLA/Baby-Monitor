@@ -360,10 +360,12 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
   }
 
   const emitToggleAudio = () => {
-    console.log('[INFO] JoinFreq emitToggleAudio')
+    console.log('[INFO] JoinFreq emitToggleAudio isVoiceOnly: ', isVoiceOnly)
     setIsVoiceOnly(!isVoiceOnly)
     socketRef.current.emit('toggle-audio')
-    if (isVoiceOnly) {
+    console.log('[INFO] JoinFreq SET isVoiceOnly: ', isVoiceOnly)
+
+    if (!isVoiceOnly) {
       console.log('[INFO] JoinFreq isVoiceOnly')
       setAudioInterval()
     } else {

@@ -32,7 +32,7 @@ const Home = ({ setNav, setGame }) => {
     <>
       {isVisible && (
         <Animated.Image
-          style={[styles.launch, { opacity: fadeAnim, zIndex: 1 }]}
+          style={[styles.launch, { opacity: fadeAnim }]}
           source={launchScreen}
           onLoad={fadeOut}
         />
@@ -79,8 +79,9 @@ const styles = {
   },
   launch: {
     position: 'absolute',
-    width: '100%',
-    height: '100%',
+    width: Size.full,
+    height: Size.full,
+    zIndex: 1,
   },
 }
 
