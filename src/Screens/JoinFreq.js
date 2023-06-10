@@ -14,7 +14,7 @@ import cameraOffIcon from '../../assets/images/Camera_off_icon.png'
 import cameraOnIcon from '../../assets/images/Camera_on_icon.png'
 import endIcon from '../../assets/images/End_call_icon.png'
 import switchCam from '../../assets/images/Switch_cam_icon.png'
-import { Font, FontFam, Color } from '@/Theme/Theme'
+import { Font, FontFam, Color, Size } from '@/Theme/Theme'
 import { Button, ScreenContainer } from '../Components'
 
 const URL = Config.SERVER
@@ -31,7 +31,7 @@ const VolumeMeter = props => {
 
   useEffect(() => {
     Animated.timing(meterAnimated, {
-      toValue: 4,
+      toValue: 1,
       duration: 100,
       useNativeDriver: true,
     }).start()
@@ -41,7 +41,6 @@ const VolumeMeter = props => {
     <Animated.View // Special animatable View
       style={{
         ...props.style,
-        opacity: meterAnimated, // Bind opacity to animated val
         transform: [
           {
             scale: meterAnimated.interpolate({
@@ -360,10 +359,12 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
   }
 
   const emitToggleAudio = () => {
-    console.log('[INFO] JoinFreq emitToggleAudio')
+    console.log('[INFO] JoinFreq emitToggleAudio isVoiceOnly: ', isVoiceOnly)
     setIsVoiceOnly(!isVoiceOnly)
     socketRef.current.emit('toggle-audio')
-    if (isVoiceOnly) {
+    console.log('[INFO] JoinFreq SET isVoiceOnly: ', isVoiceOnly)
+
+    if (!isVoiceOnly) {
       console.log('[INFO] JoinFreq isVoiceOnly')
       setAudioInterval()
     } else {
@@ -402,33 +403,27 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
 
 const styles = {
   rtcContainer: {
-    width: '100%',
+    width: Size.full,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: Color.background,
   },
-  rtcView: { width: '100%', height: '100%' },
-  input: {
-    width: 200,
-    height: 30,
-    borderColor: 'black',
-    borderWidth: 2,
-    marginVertical: 10,
-  },
+  rtcView: { width: Size.full, height: Size.full },
   preview: {
-    height: '100%',
+    height: Size.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonCont: {
     position: 'absolute',
-    zIndex: 99,
+    zIndex: 1,
     bottom: 40,
-    width: '100%',
+    width: Size.full,
     alignItems: 'center',
     justifyContent: 'space-around',
     flexDirection: 'row',
-    paddingHorizontal: 30,
+    // paddingHorizontal: 30,
   },
   connecting: {
     fontFamily: FontFam.kaisei,
@@ -436,10 +431,10 @@ const styles = {
     color: Color.black,
   },
   volumeMeter: {
-    width: 50,
-    height: 50,
-    backgroundColor: 'red',
-    borderRadius: 50,
+    width: Size.large,
+    height: Size.large,
+    backgroundColor: Color.darkGreen,
+    borderRadius: Size.xxxlarge,
   },
 }
 

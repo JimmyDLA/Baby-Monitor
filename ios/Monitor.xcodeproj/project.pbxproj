@@ -16,11 +16,11 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* MonitorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MonitorTests.m */; };
+		63EEDBA5E8DC46AF8C7FF585 /* Kaisei Decol Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7B9C0249BC34C24A0594839 /* Kaisei Decol Regular.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		833F2006FE004CFBA319C9F2 /* libPods-Monitor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CE8F60935CC7F1EA8FB7E0E /* libPods-Monitor.a */; };
-		EA0043F183F44B07A2DFDF69 /* Inter Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5E1E1C8D91054504BF7555B2 /* Inter Medium.ttf */; };
-		63EEDBA5E8DC46AF8C7FF585 /* Kaisei Decol Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7B9C0249BC34C24A0594839 /* Kaisei Decol Regular.ttf */; };
 		E1584EC63A0C4FBA8869198C /* Poetsen One.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2CB8C4D3B46E42499E7B5277 /* Poetsen One.ttf */; };
+		EA0043F183F44B07A2DFDF69 /* Inter Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5E1E1C8D91054504BF7555B2 /* Inter Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,18 +53,18 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Monitor/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Monitor/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Monitor/main.m; sourceTree = "<group>"; };
+		2CB8C4D3B46E42499E7B5277 /* Poetsen One.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poetsen One.ttf"; path = "../assets/fonts/Poetsen One.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Monitor-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Monitor-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Monitor-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Monitor-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F9E780CE724C60CB827C553 /* Pods-Monitor-MonitorTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Monitor-MonitorTests.debug.xcconfig"; path = "Target Support Files/Pods-Monitor-MonitorTests/Pods-Monitor-MonitorTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5E1E1C8D91054504BF7555B2 /* Inter Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter Medium.ttf"; path = "../assets/fonts/Inter Medium.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Monitor/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8CE8F60935CC7F1EA8FB7E0E /* libPods-Monitor.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Monitor.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		968A20F8BD0245E30FBD22A5 /* Pods-Monitor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Monitor.release.xcconfig"; path = "Target Support Files/Pods-Monitor/Pods-Monitor.release.xcconfig"; sourceTree = "<group>"; };
 		A8A496B83138A0046DC1D49A /* Pods-Monitor-MonitorTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Monitor-MonitorTests.release.xcconfig"; path = "Target Support Files/Pods-Monitor-MonitorTests/Pods-Monitor-MonitorTests.release.xcconfig"; sourceTree = "<group>"; };
+		D7B9C0249BC34C24A0594839 /* Kaisei Decol Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Kaisei Decol Regular.ttf"; path = "../assets/fonts/Kaisei Decol Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		5E1E1C8D91054504BF7555B2 /* Inter Medium.ttf */ = {isa = PBXFileReference; name = "Inter Medium.ttf"; path = "../assets/fonts/Inter Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		D7B9C0249BC34C24A0594839 /* Kaisei Decol Regular.ttf */ = {isa = PBXFileReference; name = "Kaisei Decol Regular.ttf"; path = "../assets/fonts/Kaisei Decol Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		2CB8C4D3B46E42499E7B5277 /* Poetsen One.ttf */ = {isa = PBXFileReference; name = "Poetsen One.ttf"; path = "../assets/fonts/Poetsen One.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +154,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		4CEEC9E261DC47E3A19046EB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5E1E1C8D91054504BF7555B2 /* Inter Medium.ttf */,
+				D7B9C0249BC34C24A0594839 /* Kaisei Decol Regular.ttf */,
+				2CB8C4D3B46E42499E7B5277 /* Poetsen One.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,17 +197,6 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
-		};
-		4CEEC9E261DC47E3A19046EB /* Resources */ = {
-			isa = "PBXGroup";
-			children = (
-				5E1E1C8D91054504BF7555B2 /* Inter Medium.ttf */,
-				D7B9C0249BC34C24A0594839 /* Kaisei Decol Regular.ttf */,
-				2CB8C4D3B46E42499E7B5277 /* Poetsen One.ttf */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
 		};
 /* End PBXGroup section */
 
