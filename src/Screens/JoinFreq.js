@@ -57,7 +57,7 @@ const VolumeMeter = props => {
 }
 
 const JoinFreq = ({ room, setNav, saveNewFreq }) => {
-  console.log('[INFO] JoinFreq room:', room)
+  // console.log('[INFO] JoinFreq room:', room)
   const peerRef = useRef()
   const socketRef = useRef()
   const otherUser = useRef()
@@ -67,18 +67,19 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
   const remoteMediaRef = useRef()
 
   const [remoteMediaStream, setRemoteMediaStream] = useState(null)
+  const [isDisconnect, setIsDisconnect] = useState(false)
   const [isVoiceOnly, setIsVoiceOnly] = useState(false)
   const [volumeLevel, setVolumeLevel] = useState(0)
   const parent = 'parent'
   const camIcon = isVoiceOnly ? cameraOnIcon : cameraOffIcon
 
   useEffect(() => {
-    console.log('[INFO] JoinFreq useEffect', room)
+    // console.log('[INFO] JoinFreq useEffect', room)
     socketRef.current = io.connect(URL)
-    console.log('[INFO] JoinFreq sockeet', socketRef.current)
+    // console.log('[INFO] JoinFreq sockeet', socketRef.current)
     setTimeout(() => {
-      console.log('TIMEDOUT: checking remote stream, ', remoteMediaStream)
-      if (!remoteMediaRef.current) {
+      // console.log('TIMEDOUT: checking remote stream, ', remoteMediaStream)
+      if (!remoteMediaRef.current && !peerRef.current) {
         Alert.alert(
           'Connection Timed-out',
           'Can not connect to baby room. Please try again.',
@@ -86,6 +87,10 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
             {
               text: 'OK',
               onPress: () => setNav({ screen: 'Home' }),
+            },
+            {
+              text: 'Cancel',
+              onPress: () => { },
             },
           ],
         )
@@ -97,14 +102,14 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
 
     // ====================== 4. Add Listener for server if there is another user in room ======================
     socketRef.current.on('other-user', userID => {
-      console.log('[INFO] JoinFreq other-user', { userID })
+      // console.log('[INFO] JoinFreq other-user', { userID })
       // ====================== 5. Call this other user with userID ======================
       callUser(userID)
       otherUser.current = userID
     })
     // Signals that both peers have joined the room
     socketRef.current.on('user-joined', userID => {
-      console.log('[INFO] JoinFreq user-joined', { userID })
+      // console.log('[INFO] JoinFreq user-joined', { userID })
 
       otherUser.current = userID
     })
@@ -119,13 +124,13 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
     socketRef.current.on('end', handleEnd)
 
     return () => {
-      console.log('[INFO] JoinFreq cleanup ')
+      // console.log('[INFO] JoinFreq cleanup ')
     }
   }, [])
 
   function callUser(userID) {
     // ====================== 6. Initiated a call with Peer() & add peerRef ======================
-    console.log('[INFO] JoinFreq Initiated a call')
+    // console.log('[INFO] JoinFreq Initiated a call')
     peerRef.current = Peer(userID)
     localMediaRef.current = getMedia()
     // sendChannel.current = peerRef.current.createDataChannel('sendChannel')
@@ -152,12 +157,12 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
       return mediaStream
     } catch (err) {
       // Handle Error
-      console.log({ err })
+      // console.log({ err })
     }
   }
 
   function Peer(userID) {
-    console.log('[INFO] JoinFreq Peer')
+    // console.log('[INFO] JoinFreq Peer')
     /*
       Here we are using Turn and Stun server
       (ref: https://blog.ivrpowers.com/post/technologies/what-is-stun-turn-server/)
@@ -167,28 +172,55 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
     })
 
-    // peer.onicecandidate = handleICECandidateEvent
-    // peer.onaddstream = event => {
-    //   console.log('[INFO] JoinFreq onaddstream')
-    //   setRemoteMediaStream(event.stream)
-    // }
     peer.ontrack = handleTrackEvnet
     // ====================== 8. Add Listener for hand shake to handle Negotiation need  ======================
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID)
     peer.onaddstream = event => handleAddStream(event)
+    peer.onsignalingstatechange = event => {
+      console.log('[STAT] JoinFreq signal', peerRef.current.signalingState)
+    }
+    peer.ondatachannel = async event => {
+      sendChannel.current = event.channel
+      sendChannel.current.onmessage = handleReceiveMessage
+      // console.log('[SUCCESS] JoinFreq Connection established')
+    }
+
+    peer.onconnectionstatechange = event => {
+      console.log(
+        '[STAT] JoinFreq connection changed: ',
+        peerRef.current.connectionState,
+      )
+      if (peerRef.current.connectionState === 'disconnected') {
+        setIsDisconnect(true)
+      }
+
+      if (peerRef.current.connectionState === 'failed') {
+        Alert.alert(
+          'Connection Failed',
+          "Please check baby's room device and verify it's connect to the internet.",
+          [
+            {
+              text: 'OK',
+              onPress: () => setNav({ screen: 'Home' }),
+            },
+          ],
+        )
+      }
+    }
+
+    peer.oniceconnectionstatechange = event => {
+      console.log(
+        '[STAT] JoinFreq ice connection changed : ',
+        peerRef.current.iceConnectionState,
+      )
+    }
     return peer
   }
 
   async function handleAddStream(event) {
-    console.log('[INFO] JoinFreq onaddstream', { event })
+    // console.log('[INFO] JoinFreq onaddstream', { event })
     remoteMediaRef.current = event.stream
     setRemoteMediaStream(event.stream)
-    const stats = await peerRef.current.getStats()
-    for (let value of stats) {
-      if (value[1].audioLevel) {
-        console.log('[INFO] JoinFreq Stats value', value[1].audioLevel)
-      }
-    }
   }
 
   function handleNegotiationNeededEvent(userID) {
@@ -207,7 +239,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
         return peerRef.current.setLocalDescription(offer)
       })
       .then(() => {
-        console.log('[INFO] JoinFreq handleNegotiationNeededEvent')
+        // console.log('[INFO] JoinFreq handleNegotiationNeededEvent')
         const payload = {
           target: userID,
           caller: socketRef.current.id,
@@ -224,12 +256,12 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
       Here we are exchanging config information
       between the peers to establish communication
     */
-    console.log('[INFO] JoinFreq Handling Offer')
+    // console.log('[INFO] JoinFreq Handling Offer')
     peerRef.current = Peer()
     peerRef.current.ondatachannel = event => {
       sendChannel.current = event.channel
       sendChannel.current.onmessage = handleReceiveMessage
-      console.log('[SUCCESS] JoinFreq Connection established')
+      // console.log('[SUCCESS] JoinFreq Connection established')
     }
     // peerRef.current.onaddstream = event => {
     //   console.log('=================================================================================================> EVENT!', event)
@@ -257,7 +289,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
         return peerRef.current.setLocalDescription(answer)
       })
       .then(() => {
-        console.log('[INFO] JoinFreq handleOffer answer,')
+        // console.log('[INFO] JoinFreq handleOffer answer,')
 
         const payload = {
           target: incoming.caller,
@@ -273,7 +305,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
     // =========== 20. Set remote descp and possibly emitting ice candidate event ============
 
     // Handle answer by the receiving peer
-    console.log('[INFO] JoinFreq handleAnswer.')
+    // console.log('[INFO] JoinFreq handleAnswer.')
     const desc = new RTCSessionDescription(message.sdp)
 
     // eslint-disable-next-line prettier/prettier
@@ -283,7 +315,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
 
   function handleReceiveMessage(e) {
     // Listener for receiving messages from the peer
-    console.log('[INFO] JoinFreq Message received from peer', e.data)
+    // console.log('[INFO] JoinFreq Message received from peer', e.data)
     // setRemoteMediaStream(e.data)
   }
 
@@ -295,7 +327,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
       ICE candidates and then decide which to choose best among possible
       candidates
     */
-    console.log('[INFO] JoinFreq Handling ICE Candidate Event')
+    // console.log('[INFO] JoinFreq Handling ICE Candidate Event')
 
     if (e.candidate) {
       const payload = {
@@ -308,7 +340,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
 
   function handleEnd() {
     saveNewFreq('')
-    console.log('[INFO] JoinFreq end')
+    // console.log('[INFO] JoinFreq end')
     clearAudioInterval()
     setRemoteMediaStream(null)
     peerRef.current._unregisterEvents()
@@ -324,7 +356,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
 
   function handleNewICECandidateMsg(incoming) {
     // =========== 26. create & set ice candidate to peer  ============
-    console.log('[INFO] JoinFreq handleNewICECandidateMsg', incoming)
+    // console.log('[INFO] JoinFreq handleNewICECandidateMsg', incoming)
     const candidate = new RTCIceCandidate(incoming.candidate)
 
     peerRef.current
@@ -333,7 +365,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
   }
 
   function handleTrackEvnet(e) {
-    console.log('[INFO] JoinFreq Track received from peer', e)
+    // console.log('[INFO] JoinFreq Track received from peer', e)
   }
 
   const emitSwitchCamera = () => {
@@ -341,40 +373,48 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
   }
 
   const setAudioInterval = () => {
-    console.log('[INFO] JoinFreq setAudioInterval')
+    // console.log('[INFO] JoinFreq setAudioInterval')
     audioInterval.current = setInterval(async () => {
       const stats = await peerRef.current.getStats()
       for (let value of stats) {
         if (value[1].audioLevel) {
-          console.log('[INFO] JoinFreq Stats value', value[1].audioLevel)
-          setVolumeLevel(value[1].audioLevel * 4)
+          // console.log('[INFO] JoinFreq Stats value', value[1].audioLevel)
+          setVolumeLevel(value[1].audioLevel * 5)
         }
       }
     }, 100)
   }
 
   const clearAudioInterval = () => {
-    console.log('[INFO] JoinFreq clearAudioInterval')
+    // console.log('[INFO] JoinFreq clearAudioInterval')
     clearInterval(audioInterval.current)
   }
 
   const emitToggleAudio = () => {
-    console.log('[INFO] JoinFreq emitToggleAudio isVoiceOnly: ', isVoiceOnly)
+    // console.log('[INFO] JoinFreq emitToggleAudio isVoiceOnly: ', isVoiceOnly)
     setIsVoiceOnly(!isVoiceOnly)
     socketRef.current.emit('toggle-audio')
-    console.log('[INFO] JoinFreq SET isVoiceOnly: ', isVoiceOnly)
+    // console.log('[INFO] JoinFreq SET isVoiceOnly: ', isVoiceOnly)
 
     if (!isVoiceOnly) {
-      console.log('[INFO] JoinFreq isVoiceOnly')
+      // console.log('[INFO] JoinFreq isVoiceOnly')
       setAudioInterval()
     } else {
-      console.log('[INFO] JoinFreq isVoiceOnly else')
+      // console.log('[INFO] JoinFreq isVoiceOnly else')
       clearAudioInterval()
     }
   }
 
   return remoteMediaStream ? (
     <View style={styles.rtcContainer}>
+      {isDisconnect && (
+        <View style={styles.disconnectCont}>
+          <Text style={styles.disconnectText}>Connection Disconnected.</Text>
+          <Text style={styles.disconnectText}>
+            Please wait, reconnecting...
+          </Text>
+        </View>
+      )}
       {!isVoiceOnly ? (
         <RTCView
           style={styles.rtcView}
@@ -423,7 +463,6 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'space-around',
     flexDirection: 'row',
-    // paddingHorizontal: 30,
   },
   connecting: {
     fontFamily: FontFam.kaisei,
@@ -435,6 +474,19 @@ const styles = {
     height: Size.large,
     backgroundColor: Color.darkGreen,
     borderRadius: Size.xxxlarge,
+  },
+  disconnectCont: {
+    position: 'absolute',
+    top: 100,
+    zIndex: 1,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    padding: Size.large,
+    borderRadius: Size.large,
+  },
+  disconnectText: {
+    color: Color.secondary,
+    fontFamily: FontFam.kaisei,
+    fontSize: Font.regular,
   },
 }
 
