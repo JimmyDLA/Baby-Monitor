@@ -69,7 +69,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     })
 
     socketRef.current = io.connect(URL)
-    startNewFrequency()
+    console.log({ socketRef })
 
     socketRef.current.emit('join-freq', { baby, room }) // Room ID
 
@@ -110,6 +110,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
         videoTrack.enabled = false
       }
       InCallManager.setForceSpeakerphoneOn(true)
+      InCallManager.setKeepScreenOn(true)
 
       return mediaStream
     } catch (err) {
@@ -149,6 +150,20 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
       sendChannel.current = event.channel
       sendChannel.current.onmessage = handleReceiveMessage
       console.log('[SUCCESS] createFreq Connection established')
+    }
+
+    peer.onconnectionstatechange = event => {
+      console.log(
+        '[STAT] createFreq connection changed: ',
+        peerRef.current.connectionState,
+      )
+    }
+
+    peer.oniceconnectionstatechange = event => {
+      console.log(
+        '[STAT] createFreq ice connection changed : ',
+        peerRef.current.iceConnectionState,
+      )
     }
     return peer
   }
