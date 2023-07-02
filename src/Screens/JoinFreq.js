@@ -9,7 +9,7 @@ import {
 } from 'react-native-webrtc'
 import Config from 'react-native-config'
 import InCallManager from 'react-native-incall-manager'
-import { View, Text, Animated, Alert } from 'react-native'
+import { StatusBar, View, Text, Animated, Alert } from 'react-native'
 import cameraOffIcon from '../../assets/images/Camera_off_icon.png'
 import cameraOnIcon from '../../assets/images/Camera_on_icon.png'
 import endIcon from '../../assets/images/End_call_icon.png'
@@ -352,6 +352,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
 
   function emitEnd() {
     socketRef.current.emit('end', room)
+    handleEnd()
   }
 
   function handleNewICECandidateMsg(incoming) {
@@ -407,6 +408,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
 
   return remoteMediaStream ? (
     <View style={styles.rtcContainer}>
+      <StatusBar barStyle={'dark-content'} />
       {isDisconnect && (
         <View style={styles.disconnectCont}>
           <Text style={styles.disconnectText}>Connection Disconnected.</Text>
@@ -434,6 +436,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
     </View>
   ) : (
     <ScreenContainer>
+      <StatusBar barStyle={'dark-content'} />
       <View style={styles.preview}>
         <Text style={styles.connecting}>CONNECTING...</Text>
       </View>
