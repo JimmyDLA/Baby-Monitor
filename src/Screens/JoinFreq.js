@@ -153,7 +153,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
       }
 
       peerRef.current.addStream(mediaStream)
-      InCallManager.setForceSpeakerphoneOn(true)
+      InCallManager.setSpeakerphoneOn(true)
       return mediaStream
     } catch (err) {
       // Handle Error

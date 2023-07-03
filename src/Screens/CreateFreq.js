@@ -109,7 +109,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
         let videoTrack = await mediaStream.getVideoTracks()[0]
         videoTrack.enabled = false
       }
-      InCallManager.setForceSpeakerphoneOn(true)
+      InCallManager.setSpeakerphoneOn(true)
       InCallManager.setKeepScreenOn(true)
 
       return mediaStream
