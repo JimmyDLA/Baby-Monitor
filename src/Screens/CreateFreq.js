@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Alert, View, Text, TouchableOpacity } from 'react-native'
+import { Alert, View, Text } from 'react-native'
 import {
   RTCPeerConnection,
   RTCSessionDescription,
@@ -13,6 +13,8 @@ import 'react-native-get-random-values'
 import { v4 as uuidV4 } from 'uuid'
 import QRCode from 'react-native-qrcode-svg'
 import { useNavigation } from '@react-navigation/native'
+import { Button, ScreenContainer } from '../Components'
+import { Font, FontFam, Color } from '@/Theme/Theme'
 
 const URL = Config.SERVER
 
@@ -25,9 +27,9 @@ const mediaConstraints = {
     facingMode: 'user',
   },
 }
+const room = uuidV4()
 
 const CreateFreq = ({ setNav, startNewFrequency }) => {
-  const room = uuidV4()
   const peerRef = useRef()
   const socketRef = useRef()
   const otherUser = useRef()
@@ -58,14 +60,16 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
           style: 'destructive',
           // If the user confirmed, then we dispatch the action we blocked earlier
           // This will continue the action that had triggered the removal of the screen
-          onPress: () => navigation.dispatch(e.data.action),
+          onPress: () => {
+            socketRef.current.emit('end', room)
+            navigation.dispatch(e.data.action)
+          },
         },
       ])
     })
 
-    console.log({ room })
     socketRef.current = io.connect(URL)
-    startNewFrequency()
+    console.log({ socketRef })
 
     socketRef.current.emit('join-freq', { baby, room }) // Room ID
 
@@ -105,7 +109,8 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
         let videoTrack = await mediaStream.getVideoTracks()[0]
         videoTrack.enabled = false
       }
-      InCallManager.setForceSpeakerphoneOn(true)
+      InCallManager.setSpeakerphoneOn(true)
+      InCallManager.setKeepScreenOn(true)
 
       return mediaStream
     } catch (err) {
@@ -145,6 +150,20 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
       sendChannel.current = event.channel
       sendChannel.current.onmessage = handleReceiveMessage
       console.log('[SUCCESS] createFreq Connection established')
+    }
+
+    peer.onconnectionstatechange = event => {
+      console.log(
+        '[STAT] createFreq connection changed: ',
+        peerRef.current.connectionState,
+      )
+    }
+
+    peer.oniceconnectionstatechange = event => {
+      console.log(
+        '[STAT] createFreq ice connection changed : ',
+        peerRef.current.iceConnectionState,
+      )
     }
     return peer
   }
@@ -284,6 +303,10 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     setNav({ screen: 'Home' })
   }
 
+  const handleExit = () => {
+    setNav({ screen: 'Home' })
+  }
+
   async function handleSwitch() {
     console.log('[INFO] createFreq handleSwitch')
     let cameraCount = 0
@@ -326,60 +349,31 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     peerRef.current.addIceCandidate(candidate).catch(e => console.log(e))
   }
 
-  return !localMediaStream ? (
-    <View style={styles.preview}>
-      <Text style={styles.text}>Scan QR Code to join Frequency</Text>
-      <QRCode size={200} value={room} />
-      <Text style={styles.text}>OR</Text>
-      <Text style={styles.text}>Type frequncy ID to join:</Text>
-      <Text style={styles.text}>{room}</Text>
-    </View>
-  ) : (
-    <View style={styles.preview}>
-      <TouchableOpacity style={styles.button} onPress={handleSwitch}>
-        <Text style={styles.buttonText}>Switch Camera</Text>
-      </TouchableOpacity>
-    </View>
+  return (
+    <ScreenContainer>
+      <View style={styles.preview}>
+        <Text style={styles.text}>Scan QR code to join room</Text>
+        <QRCode size={200} value={room} />
+        {localMediaStream && <Text>LIVE</Text>}
+        <Text style={styles.text}>OR</Text>
+        <Text style={styles.text}>Type room ID to join:</Text>
+        <Text style={styles.text}>{room}</Text>
+        <Button secondary text="Exit" onPress={handleExit} />
+      </View>
+    </ScreenContainer>
   )
 }
 
 const styles = {
-  rtcContainer: {
-    width: '100%',
-    height: 300,
-    alignItems: 'center',
-    backgroundColor: 'pink',
-  },
-  rtcView: { width: '100%', height: '100%' },
-  input: {
-    width: 200,
-    height: 30,
-    borderColor: 'black',
-    borderWidth: 2,
-    marginVertical: 10,
-  },
   preview: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'space-around',
-    backgroundColor: 'white',
-    paddingHorizontal: 20,
-  },
-  container: {
-    width: '100%',
-    height: 300,
-    backgroundColor: 'white',
+    height: '100%',
   },
   text: {
-    fontSize: 20,
-  },
-  button: {
-    marginTop: 30,
-    height: 65,
-    width: '100%',
-    backgroundColor: 'rgb(46,103,188)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    fontSize: Font.regular,
+    fontFamily: FontFam.kaisei,
+    color: Color.black,
   },
   buttonText: {
     color: 'white',

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
+import { Text, View, Alert, StatusBar } from 'react-native'
 import { RNCamera } from 'react-native-camera'
-import { ScreenContainer } from '../Components/ScreenContainer'
-import { Button } from '../Components/Button'
+import { Input, Button, ScreenContainer } from '../Components'
 import { Font, FontFam, Color, Size } from '@/Theme/Theme'
 
 const PendingView = () => (
@@ -21,10 +20,6 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
       console.log('[INFO] EnterFreq cleanup ')
     }
   }, [QRCodeRead])
-
-  const handleCreateFreq = () => {
-    setGame(true)
-  }
 
   const handleJoinFreq = () => {
     if (!joinFreq) {
@@ -64,7 +59,8 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
   }
 
   return isScanning ? (
-    <View style={[styles.container, { paddingHorizontal: 0 }]}>
+    <View style={styles.container}>
+      <StatusBar barStyle={'light-content'} />
       <RNCamera
         style={styles.preview}
         type={RNCamera.Constants.Type.back}
@@ -92,7 +88,7 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
               <View style={styles.outterContainer}>
                 <View style={styles.top}>
                   <Text style={styles.instruction}>
-                    Scan QR code to join frequency
+                    Scan QR code to join room
                   </Text>
                 </View>
                 <View style={styles.middle}>
@@ -102,7 +98,7 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
                 <View style={styles.bottom}>
                   <Button
                     primary
-                    text="Enter Frequency ID Manually"
+                    text="Enter Room ID Manually"
                     onPress={handleCamToggle}
                   />
                   {room && (
@@ -126,11 +122,7 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
       </View>
 
       <View style={styles.inputCont}>
-        <TextInput
-          placeholder="Enter Frequency"
-          onChangeText={handleOnChange}
-          style={styles.input}
-        />
+        <Input placeholder="Entre Room ID" onChange={handleOnChange} />
         <Button secondary text="Join Frequency" onPress={handleJoinFreq} />
       </View>
     </ScreenContainer>
@@ -142,27 +134,7 @@ const styles = {
     width: '100%',
     backgroundColor: 'gray',
     flex: 1,
-    paddingHorizontal: 20,
-  },
-  input: {
-    width: '100%',
-    height: 65,
-    borderColor: 'white',
-    borderWidth: 2,
-    marginVertical: 10,
-    padding: 10,
-    color: 'white',
-  },
-  button: {
-    marginTop: 30,
-    height: 65,
-    width: '100%',
-    backgroundColor: 'rgb(46,103,188)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: 'white',
+    paddingHorizontal: 0,
   },
   buttonCont: {
     width: '100%',
@@ -191,14 +163,14 @@ const styles = {
   },
   top: {
     width: '100%',
-    height: '30%',
+    height: '25%',
     backgroundColor: 'rgba(0,0,0,0.7)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   middle: {
     width: '100%',
-    height: '40%',
+    height: '41%',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -214,7 +186,7 @@ const styles = {
   },
   bottom: {
     width: '100%',
-    height: '30%',
+    height: '35%',
     backgroundColor: 'rgba(0,0,0,0.7)',
     paddingHorizontal: 30,
   },
