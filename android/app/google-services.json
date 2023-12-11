@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "18357005938",
+    "project_id": "baby-monitor-1be37",
+    "storage_bucket": "baby-monitor-1be37.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18357005938:android:4be9996d4781bd0bcd1ceb",
+        "android_client_info": {
+          "package_name": "com.monitor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3O9kO7qmNE0mJ2bXfO8orHRsBVjV3ZTM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

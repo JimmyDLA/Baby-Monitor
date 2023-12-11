@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Alert, View, Text } from 'react-native'
+import crashlytics from '@react-native-firebase/crashlytics'
 import {
   RTCPeerConnection,
   RTCSessionDescription,
@@ -116,6 +117,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     } catch (err) {
       // Handle Error
       console.log({ err })
+      crashlytics().recordError(err, 'getMedia - create freq')
     }
   }
 
@@ -324,6 +326,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     } catch (err) {
       // Handle Error
       console.log('[ERR] createFreq handleSwitch error')
+      crashlytics().recordError(err, 'handleSwitch - create freq')
     }
     console.log('[INFO] createFreq', { cameraCount })
 

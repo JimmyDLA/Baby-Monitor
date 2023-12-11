@@ -7,6 +7,7 @@ import {
   RTCView,
   mediaDevices,
 } from 'react-native-webrtc'
+import crashlytics from '@react-native-firebase/crashlytics'
 import Config from 'react-native-config'
 import InCallManager from 'react-native-incall-manager'
 import { StatusBar, View, Text, Animated, Alert } from 'react-native'
@@ -157,7 +158,8 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
       return mediaStream
     } catch (err) {
       // Handle Error
-      // console.log({ err })
+      console.log({ err })
+      crashlytics().recordError(err, 'callUser - join freq')
     }
   }
 

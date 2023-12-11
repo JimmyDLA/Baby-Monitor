@@ -1,17 +1,51 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { Animated, Text, View, Image } from 'react-native'
 import { Button, ScreenContainer } from '../Components'
 import { Font, FontFam, Size } from '@/Theme/Theme'
 import logo from '../../assets/images/Logo_Name.png'
 import launchScreen from '../../assets/images/Launch_screen.png'
+import crashlytics from '@react-native-firebase/crashlytics'
+import analytics from '@react-native-firebase/analytics'
+import {
+  getUniqueId,
+  getCarrier,
+  getBatteryLevel,
+  getDeviceType,
+  isEmulator,
+} from 'react-native-device-info'
 
 const Home = ({ setNav, setGame }) => {
   const [isVisible, setIsVisible] = useState(true)
+
+  useEffect(() => {
+    async function logCrash() {
+      const isSumlator = await isEmulator()
+      const deviceId = await getUniqueId()
+      const deviceType = getDeviceType()
+      const idInst = await analytics().getAppInstanceId()
+      let crashObj = { idInst, isSumlator, deviceId, deviceType }
+      await analytics().logEvent('opened')
+      if (!isSumlator) {
+        const battery = await getBatteryLevel()
+        const carrier = await getCarrier()
+        const tempObj = { battery, carrier }
+        crashObj = { ...tempObj }
+      }
+      console.warn(`${JSON.stringify(crashObj)}`)
+      crashlytics().log(`${JSON.stringify(crashObj)}`)
+    }
+
+    logCrash()
+
+  }, [])
+
   const handleCreateFreq = () => {
     setGame(true)
   }
 
   const handleJoinFreq = () => {
+    crashlytics().crash()
+    // crashlytics().log()
     setNav({ screen: 'EnterFreq' })
   }
 
