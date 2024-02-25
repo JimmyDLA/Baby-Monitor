@@ -2,6 +2,8 @@ import React from 'react'
 import { StatusBar } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
+import analytics from '@react-native-firebase/analytics'
+
 import {
   StartupContainer,
   CreateFreq,
@@ -17,7 +19,6 @@ const Stack = createStackNavigator()
 // @refresh reset
 const ApplicationNavigator = () => {
   const { darkMode, NavigationTheme } = useTheme()
-
   return (
     <NavigationContainer theme={NavigationTheme} ref={navigationRef}>
       <StatusBar barStyle={'dark-content'} />

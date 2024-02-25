@@ -1,7 +1,8 @@
 import { call as calling, put, takeEvery } from 'redux-saga/effects'
 import { saveNewFreq, SET_NAV, START_NEW_FREQ } from '../Reducers/frequency'
 import { navigate } from '../Navigators/utils'
-import axios from 'axios'
+import crashlytics from '@react-native-firebase/crashlytics'
+
 
 /**
  * The startup saga is the place to define behavior to execute when the application starts.
@@ -18,6 +19,7 @@ export function* doSetNav(action) {
     navigate(screen)
   } catch (error) {
     console.warn(error)
+    crashlytics().recordError(error, 'SET_NAV')
   }
 }
 
