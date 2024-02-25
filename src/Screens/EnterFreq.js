@@ -99,7 +99,6 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
             <PendingView status={status} handleClose={handleClose} />
           ) : (
             <View style={styles.innerContainer}>
-
               <View style={styles.outterContainer}>
                 <View style={styles.top}>
                   <TouchableOpacity

@@ -357,7 +357,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
       <View style={styles.preview}>
         <Text style={styles.text}>Scan QR code to join room</Text>
         <QRCode size={200} value={room} />
-        {localMediaStream && <Text>LIVE</Text>}
+        {localMediaStream && <Text style={styles.live}>LIVE</Text>}
         <Text style={styles.text}>OR</Text>
         <Text style={styles.text}>Type room ID to join:</Text>
         <Text style={styles.text}>{room}</Text>
@@ -380,6 +380,9 @@ const styles = {
   },
   buttonText: {
     color: 'white',
+  },
+  live: {
+    color: 'red',
   },
 }
 

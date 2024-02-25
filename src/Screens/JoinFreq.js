@@ -95,6 +95,8 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
             },
           ],
         )
+        const err = new Error('Connection Timed-out - join freq')
+        crashlytics().recordError(err, 'Connection Timed-out - join freq')
       }
     }, 10000)
     // ====================== 1. Emit joining roomID to server ======================
@@ -159,7 +161,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
     } catch (err) {
       // Handle Error
       console.log({ err })
-      crashlytics().recordError(err, 'callUser - join freq')
+      crashlytics().recordError(err, 'getMedia - join freq')
     }
   }
 

@@ -18,13 +18,14 @@ const Home = ({ setNav, setGame }) => {
   const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
-    async function logCrash() {
+    async function logInitialAnalytics() {
       const isSumlator = await isEmulator()
       const deviceId = await getUniqueId()
       const deviceType = getDeviceType()
       const idInst = await analytics().getAppInstanceId()
       let crashObj = { idInst, isSumlator, deviceId, deviceType }
-      await analytics().logEvent('opened')
+      await analytics().logEvent('home_page')
+
       if (!isSumlator) {
         const battery = await getBatteryLevel()
         const carrier = await getCarrier()
@@ -35,18 +36,22 @@ const Home = ({ setNav, setGame }) => {
       crashlytics().log(`${JSON.stringify(crashObj)}`)
     }
 
-    logCrash()
-
+    logInitialAnalytics()
   }, [])
 
   const handleCreateFreq = () => {
     setGame(true)
   }
 
-  const handleJoinFreq = () => {
-    crashlytics().crash()
-    // crashlytics().log()
-    setNav({ screen: 'EnterFreq' })
+  const handleJoinFreq = async () => {
+    try {
+      // throw 'error'
+      setNav({ screen: 'EnterFreq' })
+    } catch (error) {
+      console.warn(error)
+      await analytics().logEvent('analy_join_freq_button')
+      crashlytics().recordError(error, 'crash_join_freq_button')
+    }
   }
 
   const fadeAnim = useRef(new Animated.Value(1)).current
