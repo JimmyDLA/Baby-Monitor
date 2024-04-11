@@ -40,6 +40,8 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
 
   const [serverMsg, setServerMsg] = useState('')
   const [localMediaStream, setLocalMediaStream] = useState(null)
+  const [isRoomReady, setIsRoomReady] = useState(false)
+
   const navigation = useNavigation()
   const baby = 'baby'
   let hasEnded = false
@@ -87,12 +89,13 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
       // callUser(userID)
     })
     // ====================== 13. Add listener for icoming offers ======================
+    socketRef.current.on('end', handleEnd)
     socketRef.current.on('offer', handleOffer)
     socketRef.current.on('answer', handleAnswer)
-    socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
     socketRef.current.on('switch-camera', handleSwitch)
     socketRef.current.on('toggle-audio', handleOnAndOffCamera)
-    socketRef.current.on('end', handleEnd)
+    socketRef.current.on('ice-candidate', handleNewICECandidateMsg)
+    socketRef.current.on('confirm-room', handleConfirmation)
 
     return () => {
       console.log('[INFO] createFreq cleanup ')
@@ -352,16 +355,26 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     peerRef.current.addIceCandidate(candidate).catch(e => console.log(e))
   }
 
+  const handleConfirmation = e => {
+    setIsRoomReady(e)
+  }
+
   return (
     <ScreenContainer>
       <View style={styles.preview}>
-        <Text style={styles.text}>Scan QR code to join room</Text>
-        <QRCode size={200} value={room} />
-        {localMediaStream && <Text style={styles.live}>LIVE</Text>}
-        <Text style={styles.text}>OR</Text>
-        <Text style={styles.text}>Type room ID to join:</Text>
-        <Text style={styles.text}>{room}</Text>
-        <Button secondary text="Exit" onPress={handleExit} />
+        {isRoomReady ? (
+          <>
+            <Text style={styles.text}>Scan QR code to join room</Text>
+            <QRCode size={200} value={room} />
+            {localMediaStream && <Text style={styles.live}>LIVE</Text>}
+            <Text style={styles.text}>OR</Text>
+            <Text style={styles.text}>Type room ID to join:</Text>
+            <Text style={styles.text}>{room}</Text>
+            <Button secondary text="Exit" onPress={handleExit} />
+          </>
+        ) : (
+          <Text style={styles.text}>Connecting to server...</Text>
+        )}
       </View>
     </ScreenContainer>
   )
