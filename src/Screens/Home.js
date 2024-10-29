@@ -103,7 +103,7 @@ const styles = {
     paddingBottom: Size.large,
   },
   text: {
-    fontFamily: FontFam.kaisei,
+    fontFamily: FontFam.nowy,
     fontSize: Font.regular,
     paddingTop: Size.xlarge,
     textAlign: 'center',

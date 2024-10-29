@@ -10,8 +10,96 @@
       "sha1": "25c93c8eba51690180994979f43bf7829cf23b25"
     },
     {
+      "path": "assets/fonts/Kalnia.ttf",
+      "sha1": "bba2400346a7e048086fe926e26d220f01651e86"
+    },
+    {
+      "path": "assets/fonts/Laila Regular.ttf",
+      "sha1": "fab8dcdeacb178dd7a1eccc76768bd810b7d5f1d"
+    },
+    {
       "path": "assets/fonts/Poetsen One.ttf",
       "sha1": "d8336933e7532ca58d8846ca22f4cbf5c18f0914"
+    },
+    {
+      "path": "assets/fonts/Poltawski Nowy.ttf",
+      "sha1": "d70e611c934b5e432344cc6475068732cd3dad69"
+    },
+    {
+      "path": "assets/fonts/Quicksand.ttf",
+      "sha1": "17fb514f853cfeb7176a384fa29358e9c4b76c39"
+    },
+    {
+      "path": "assets/images/Camera_off_icon.png",
+      "sha1": "e671c5b123aedf126bdf5ba14efeacb46d934dff"
+    },
+    {
+      "path": "assets/images/Camera_off_icon@2x.png",
+      "sha1": "4260b35d2968e17cfc5f5a7291086e19c14b884e"
+    },
+    {
+      "path": "assets/images/Camera_off_icon@3x.png",
+      "sha1": "44fc68e2029c3d3efb13c5fd1b48ecc4a4489fd8"
+    },
+    {
+      "path": "assets/images/Camera_on_icon.png",
+      "sha1": "abbf5ba06775a067a58cb32f72602d2fa805fd66"
+    },
+    {
+      "path": "assets/images/Camera_on_icon@2x.png",
+      "sha1": "c8dbb565d4756cdde1920151828701b35ebbc1f9"
+    },
+    {
+      "path": "assets/images/Camera_on_icon@3x.png",
+      "sha1": "d287d03aa4360a257566ff21424ad0f7cd6a3bd9"
+    },
+    {
+      "path": "assets/images/End_call_icon.png",
+      "sha1": "ac67e62fe8b59de0f181953da1ea2f3e69b6d461"
+    },
+    {
+      "path": "assets/images/End_call_icon@2x.png",
+      "sha1": "d3e1b414979d5bc74f6a9c00a46c6cd0a56b27e4"
+    },
+    {
+      "path": "assets/images/End_call_icon@3x.png",
+      "sha1": "63426fcb13cc6fb7d65b0df1607e004077a88bb5"
+    },
+    {
+      "path": "assets/images/Launch_screen.png",
+      "sha1": "b60839e6908f5945d2d535429041b0bd1bb61347"
+    },
+    {
+      "path": "assets/images/Launch_screen@2x.png",
+      "sha1": "f2b2bb0bf82813a1d4a0aa6f8b2ddd47ccb913b7"
+    },
+    {
+      "path": "assets/images/Launch_screen@3x.png",
+      "sha1": "67bf457ab5a9952bd842e51488555d9f69c8e1a4"
+    },
+    {
+      "path": "assets/images/Logo_Name.png",
+      "sha1": "c964ff20f919738bda3bf154352d65439bfcc866"
+    },
+    {
+      "path": "assets/images/Logo_Name@2x.png",
+      "sha1": "d56d6c21f839f3e4bba86da901e4695e4e0b1c56"
+    },
+    {
+      "path": "assets/images/Logo_Name@3x.png",
+      "sha1": "d1d92b8e0312d6af473e93d731ae7a30d5c6ce49"
+    },
+    {
+      "path": "assets/images/Switch_cam_icon.png",
+      "sha1": "507f15b7cd05228da08a0f7353e6a53a937fb769"
+    },
+    {
+      "path": "assets/images/Switch_cam_icon@2x.png",
+      "sha1": "2f7eb679778757366c4c2bf3954b9fce57f2bcd1"
+    },
+    {
+      "path": "assets/images/Switch_cam_icon@3x.png",
+      "sha1": "bc6aceba4e721ba0a2a209b2a1c0a9ce1f74ece4"
     }
   ]
 }

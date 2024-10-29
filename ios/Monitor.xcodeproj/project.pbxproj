@@ -9,19 +9,41 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* MonitorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MonitorTests.m */; };
 		09EECD2ABCFFB62A85C989F2 /* Pods_Monitor_MonitorTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2AB952BB5D50312DE844527 /* Pods_Monitor_MonitorTests.framework */; };
+		0D3F11F7A92945C080B3C123 /* Launch_screen@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1DF1AA81C2754EF4853129FA /* Launch_screen@3x.png */; };
+		0EDD6891A4AC4B269147FC9A /* Launch_screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0EF2C348688D4F7B82419B83 /* Launch_screen@2x.png */; };
+		10B156AFEC034BF1955659A0 /* End_call_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F98BF99935C4971A7450042 /* End_call_icon.png */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		191CF66B5D7D4E7ABE7C1F9D /* Poltawski Nowy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0F1A1CEF4D3E40A4887128B0 /* Poltawski Nowy.ttf */; };
+		287C18CEB8934F769731684A /* Launch_screen.png in Resources */ = {isa = PBXBuildFile; fileRef = E51862152317445795DCCE36 /* Launch_screen.png */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* MonitorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MonitorTests.m */; };
+		346794F2F5A34402A3D0B08A /* Logo_Name.png in Resources */ = {isa = PBXBuildFile; fileRef = AA6BA5BCF7C84E25B69F7B4D /* Logo_Name.png */; };
+		3A2D6F8BAF7C4C9D82CBE3C8 /* Switch_cam_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FBC5E3A96EA43399629ED6B /* Switch_cam_icon.png */; };
 		63EEDBA5E8DC46AF8C7FF585 /* Kaisei Decol Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7B9C0249BC34C24A0594839 /* Kaisei Decol Regular.ttf */; };
 		7BE2FE962AFE16000048F8DB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BE2FE952AFE16000048F8DB /* GoogleService-Info.plist */; };
+		80890536643C4149972F619F /* End_call_icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 93DD4F5383224AD09BDD6477 /* End_call_icon@3x.png */; };
+		811B3B53F813474BBE99BE7F /* Camera_on_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6192A31A9E1D45BD853A5373 /* Camera_on_icon@2x.png */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		82E41B51159B4A9CA570D455 /* Logo_Name@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A58CC1FB0083404C9BE888DA /* Logo_Name@2x.png */; };
 		9744E2B12784F922BED95D82 /* Pods_Monitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CB62D273A158DCE3225AE8D /* Pods_Monitor.framework */; };
+		97E217C0871D4A3C8D8286FE /* Switch_cam_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DBD618327690478FA967DD87 /* Switch_cam_icon@2x.png */; };
+		983F9D5377DA44CC8DCE8A2D /* Camera_on_icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = B0B2E08918F54B37ACB7D9EF /* Camera_on_icon@3x.png */; };
+		A73C0AA973F244E3B25FB0EB /* Camera_off_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BBA8DCDD69D43C197F56AB1 /* Camera_off_icon.png */; };
+		B2FDF7CB6B124A2884428C69 /* Camera_on_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = EA8E081EF1A94923AD3284B4 /* Camera_on_icon.png */; };
+		B6213720FAB94666B17C522B /* Logo_Name@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84D9F2148F14487D96D0E33D /* Logo_Name@3x.png */; };
+		B78DBB80B6924C0BBE0F8CDB /* Switch_cam_icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = A2BFD08B88A34969953CDD49 /* Switch_cam_icon@3x.png */; };
+		C21514B3C1DE44189EE5DC6E /* Camera_off_icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18005C61548B47A1943BA83D /* Camera_off_icon@3x.png */; };
 		E1584EC63A0C4FBA8869198C /* Poetsen One.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2CB8C4D3B46E42499E7B5277 /* Poetsen One.ttf */; };
 		EA0043F183F44B07A2DFDF69 /* Inter Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5E1E1C8D91054504BF7555B2 /* Inter Medium.ttf */; };
+		F31144E729D14A87AE6C9095 /* End_call_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0D040D5D0B774DF7BF7FEC22 /* End_call_icon@2x.png */; };
+		F4DB14A68733488EAB6DD95A /* Camera_off_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BD9BD2FEF23946ABB3255401 /* Camera_off_icon@2x.png */; };
+		E6C10CBE6CE1486E8139D982 /* Kalnia.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AE07D5F4308745C191AC4885 /* Kalnia.ttf */; };
+		FF5E3BCDC1D44828BABF1566 /* Laila Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D6247D319D304AE4BB34EFC7 /* Laila Regular.ttf */; };
+		0E19F319309E4DFCA9FB6245 /* Quicksand.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DBCA5E88BD6D451E82C0E4DE /* Quicksand.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +68,9 @@
 		00E356EE1AD99517003FC87E /* MonitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MonitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* MonitorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MonitorTests.m; sourceTree = "<group>"; };
+		0D040D5D0B774DF7BF7FEC22 /* End_call_icon@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "End_call_icon@2x.png"; path = "../assets/images/End_call_icon@2x.png"; sourceTree = "<group>"; };
+		0EF2C348688D4F7B82419B83 /* Launch_screen@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Launch_screen@2x.png"; path = "../assets/images/Launch_screen@2x.png"; sourceTree = "<group>"; };
+		0F1A1CEF4D3E40A4887128B0 /* Poltawski Nowy.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poltawski Nowy.ttf"; path = "../assets/fonts/Poltawski Nowy.ttf"; sourceTree = "<group>"; };
 		10ACE8560183868AA4F826E4 /* Pods-Monitor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Monitor.debug.xcconfig"; path = "Target Support Files/Pods-Monitor/Pods-Monitor.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Monitor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Monitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Monitor/AppDelegate.h; sourceTree = "<group>"; };
@@ -53,20 +78,39 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Monitor/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Monitor/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Monitor/main.m; sourceTree = "<group>"; };
+		18005C61548B47A1943BA83D /* Camera_off_icon@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Camera_off_icon@3x.png"; path = "../assets/images/Camera_off_icon@3x.png"; sourceTree = "<group>"; };
+		1DF1AA81C2754EF4853129FA /* Launch_screen@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Launch_screen@3x.png"; path = "../assets/images/Launch_screen@3x.png"; sourceTree = "<group>"; };
+		1F98BF99935C4971A7450042 /* End_call_icon.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = End_call_icon.png; path = ../assets/images/End_call_icon.png; sourceTree = "<group>"; };
 		2CB8C4D3B46E42499E7B5277 /* Poetsen One.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poetsen One.ttf"; path = "../assets/fonts/Poetsen One.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Monitor-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Monitor-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Monitor-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Monitor-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F9E780CE724C60CB827C553 /* Pods-Monitor-MonitorTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Monitor-MonitorTests.debug.xcconfig"; path = "Target Support Files/Pods-Monitor-MonitorTests/Pods-Monitor-MonitorTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5E1E1C8D91054504BF7555B2 /* Inter Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter Medium.ttf"; path = "../assets/fonts/Inter Medium.ttf"; sourceTree = "<group>"; };
+		5FBC5E3A96EA43399629ED6B /* Switch_cam_icon.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Switch_cam_icon.png; path = ../assets/images/Switch_cam_icon.png; sourceTree = "<group>"; };
+		6192A31A9E1D45BD853A5373 /* Camera_on_icon@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Camera_on_icon@2x.png"; path = "../assets/images/Camera_on_icon@2x.png"; sourceTree = "<group>"; };
 		6CB62D273A158DCE3225AE8D /* Pods_Monitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Monitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BE2FE952AFE16000048F8DB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Monitor/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		84D9F2148F14487D96D0E33D /* Logo_Name@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Logo_Name@3x.png"; path = "../assets/images/Logo_Name@3x.png"; sourceTree = "<group>"; };
+		8BBA8DCDD69D43C197F56AB1 /* Camera_off_icon.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Camera_off_icon.png; path = ../assets/images/Camera_off_icon.png; sourceTree = "<group>"; };
+		93DD4F5383224AD09BDD6477 /* End_call_icon@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "End_call_icon@3x.png"; path = "../assets/images/End_call_icon@3x.png"; sourceTree = "<group>"; };
 		968A20F8BD0245E30FBD22A5 /* Pods-Monitor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Monitor.release.xcconfig"; path = "Target Support Files/Pods-Monitor/Pods-Monitor.release.xcconfig"; sourceTree = "<group>"; };
+		A2BFD08B88A34969953CDD49 /* Switch_cam_icon@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Switch_cam_icon@3x.png"; path = "../assets/images/Switch_cam_icon@3x.png"; sourceTree = "<group>"; };
+		A58CC1FB0083404C9BE888DA /* Logo_Name@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Logo_Name@2x.png"; path = "../assets/images/Logo_Name@2x.png"; sourceTree = "<group>"; };
 		A8A496B83138A0046DC1D49A /* Pods-Monitor-MonitorTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Monitor-MonitorTests.release.xcconfig"; path = "Target Support Files/Pods-Monitor-MonitorTests/Pods-Monitor-MonitorTests.release.xcconfig"; sourceTree = "<group>"; };
+		AA6BA5BCF7C84E25B69F7B4D /* Logo_Name.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Logo_Name.png; path = ../assets/images/Logo_Name.png; sourceTree = "<group>"; };
+		B0B2E08918F54B37ACB7D9EF /* Camera_on_icon@3x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Camera_on_icon@3x.png"; path = "../assets/images/Camera_on_icon@3x.png"; sourceTree = "<group>"; };
+		BD9BD2FEF23946ABB3255401 /* Camera_off_icon@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Camera_off_icon@2x.png"; path = "../assets/images/Camera_off_icon@2x.png"; sourceTree = "<group>"; };
 		C2AB952BB5D50312DE844527 /* Pods_Monitor_MonitorTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Monitor_MonitorTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7B9C0249BC34C24A0594839 /* Kaisei Decol Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Kaisei Decol Regular.ttf"; path = "../assets/fonts/Kaisei Decol Regular.ttf"; sourceTree = "<group>"; };
+		DBD618327690478FA967DD87 /* Switch_cam_icon@2x.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Switch_cam_icon@2x.png"; path = "../assets/images/Switch_cam_icon@2x.png"; sourceTree = "<group>"; };
+		E51862152317445795DCCE36 /* Launch_screen.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Launch_screen.png; path = ../assets/images/Launch_screen.png; sourceTree = "<group>"; };
+		EA8E081EF1A94923AD3284B4 /* Camera_on_icon.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Camera_on_icon.png; path = ../assets/images/Camera_on_icon.png; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		AE07D5F4308745C191AC4885 /* Kalnia.ttf */ = {isa = PBXFileReference; name = "Kalnia.ttf"; path = "../assets/fonts/Kalnia.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D6247D319D304AE4BB34EFC7 /* Laila Regular.ttf */ = {isa = PBXFileReference; name = "Laila Regular.ttf"; path = "../assets/fonts/Laila Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		DBCA5E88BD6D451E82C0E4DE /* Quicksand.ttf */ = {isa = PBXFileReference; name = "Quicksand.ttf"; path = "../assets/fonts/Quicksand.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +206,28 @@
 				5E1E1C8D91054504BF7555B2 /* Inter Medium.ttf */,
 				D7B9C0249BC34C24A0594839 /* Kaisei Decol Regular.ttf */,
 				2CB8C4D3B46E42499E7B5277 /* Poetsen One.ttf */,
+				0F1A1CEF4D3E40A4887128B0 /* Poltawski Nowy.ttf */,
+				8BBA8DCDD69D43C197F56AB1 /* Camera_off_icon.png */,
+				BD9BD2FEF23946ABB3255401 /* Camera_off_icon@2x.png */,
+				18005C61548B47A1943BA83D /* Camera_off_icon@3x.png */,
+				EA8E081EF1A94923AD3284B4 /* Camera_on_icon.png */,
+				6192A31A9E1D45BD853A5373 /* Camera_on_icon@2x.png */,
+				B0B2E08918F54B37ACB7D9EF /* Camera_on_icon@3x.png */,
+				1F98BF99935C4971A7450042 /* End_call_icon.png */,
+				0D040D5D0B774DF7BF7FEC22 /* End_call_icon@2x.png */,
+				93DD4F5383224AD09BDD6477 /* End_call_icon@3x.png */,
+				E51862152317445795DCCE36 /* Launch_screen.png */,
+				0EF2C348688D4F7B82419B83 /* Launch_screen@2x.png */,
+				1DF1AA81C2754EF4853129FA /* Launch_screen@3x.png */,
+				AA6BA5BCF7C84E25B69F7B4D /* Logo_Name.png */,
+				A58CC1FB0083404C9BE888DA /* Logo_Name@2x.png */,
+				84D9F2148F14487D96D0E33D /* Logo_Name@3x.png */,
+				5FBC5E3A96EA43399629ED6B /* Switch_cam_icon.png */,
+				DBD618327690478FA967DD87 /* Switch_cam_icon@2x.png */,
+				A2BFD08B88A34969953CDD49 /* Switch_cam_icon@3x.png */,
+				AE07D5F4308745C191AC4885 /* Kalnia.ttf */,
+				D6247D319D304AE4BB34EFC7 /* Laila Regular.ttf */,
+				DBCA5E88BD6D451E82C0E4DE /* Quicksand.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -350,6 +416,28 @@
 				63EEDBA5E8DC46AF8C7FF585 /* Kaisei Decol Regular.ttf in Resources */,
 				E1584EC63A0C4FBA8869198C /* Poetsen One.ttf in Resources */,
 				7BE2FE962AFE16000048F8DB /* GoogleService-Info.plist in Resources */,
+				A73C0AA973F244E3B25FB0EB /* Camera_off_icon.png in Resources */,
+				F4DB14A68733488EAB6DD95A /* Camera_off_icon@2x.png in Resources */,
+				C21514B3C1DE44189EE5DC6E /* Camera_off_icon@3x.png in Resources */,
+				B2FDF7CB6B124A2884428C69 /* Camera_on_icon.png in Resources */,
+				811B3B53F813474BBE99BE7F /* Camera_on_icon@2x.png in Resources */,
+				983F9D5377DA44CC8DCE8A2D /* Camera_on_icon@3x.png in Resources */,
+				10B156AFEC034BF1955659A0 /* End_call_icon.png in Resources */,
+				F31144E729D14A87AE6C9095 /* End_call_icon@2x.png in Resources */,
+				80890536643C4149972F619F /* End_call_icon@3x.png in Resources */,
+				287C18CEB8934F769731684A /* Launch_screen.png in Resources */,
+				0EDD6891A4AC4B269147FC9A /* Launch_screen@2x.png in Resources */,
+				0D3F11F7A92945C080B3C123 /* Launch_screen@3x.png in Resources */,
+				346794F2F5A34402A3D0B08A /* Logo_Name.png in Resources */,
+				82E41B51159B4A9CA570D455 /* Logo_Name@2x.png in Resources */,
+				B6213720FAB94666B17C522B /* Logo_Name@3x.png in Resources */,
+				3A2D6F8BAF7C4C9D82CBE3C8 /* Switch_cam_icon.png in Resources */,
+				97E217C0871D4A3C8D8286FE /* Switch_cam_icon@2x.png in Resources */,
+				B78DBB80B6924C0BBE0F8CDB /* Switch_cam_icon@3x.png in Resources */,
+				191CF66B5D7D4E7ABE7C1F9D /* Poltawski Nowy.ttf in Resources */,
+				E6C10CBE6CE1486E8139D982 /* Kalnia.ttf in Resources */,
+				FF5E3BCDC1D44828BABF1566 /* Laila Regular.ttf in Resources */,
+				0E19F319309E4DFCA9FB6245 /* Quicksand.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

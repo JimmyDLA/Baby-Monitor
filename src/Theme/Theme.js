@@ -59,4 +59,8 @@ export const FontFam = {
   inter: 'Inter Medium',
   kaisei: 'Kaisei Decol Regular',
   poet: 'Poetsen One',
+  nowy: 'Poltawski Nowy',
+  kalnia: 'Kalnia',
+  laila: 'Laila Regular',
+  quick: 'QuickSand',
 }
