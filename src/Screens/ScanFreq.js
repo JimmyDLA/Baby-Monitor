@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, Alert, StatusBar, TouchableOpacity } from 'react-native'
+import { Text, View, StatusBar, TouchableOpacity } from 'react-native'
 import { RNCamera } from 'react-native-camera'
-import { Input, Button, ScreenContainer } from '../Components'
+import { Button } from '../Components'
 import { Font, FontFam, Color, Size } from '@/Theme/Theme'
 
 const PendingView = ({ status, handleClose }) => {
@@ -20,41 +20,22 @@ const PendingView = ({ status, handleClose }) => {
   )
 }
 
-const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
-  const [isScanning, setIsScanning] = useState(true)
-  const [joinFreq, setJoinFreq] = useState('')
+const ScanFreq = ({ setNav, setGame, saveNewFreq, room }) => {
   const [QRCodeRead, setQRCodeRead] = useState(false)
 
   useEffect(() => {
     return () => {
-      console.log('[INFO] EnterFreq cleanup ')
+      console.log('[INFO] ScanFreq cleanup ')
     }
   }, [QRCodeRead])
-
-  const handleJoinFreq = () => {
-    if (!joinFreq) {
-      Alert.alert(
-        "Can't Join",
-        "Can't join without a frequency. Please enter a frequency ID to join.",
-        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
-      )
-    } else {
-      saveNewFreq(joinFreq)
-      setNav({ screen: 'JoinFreq', params: joinFreq })
-    }
-  }
 
   const handleClose = () => {
     setNav({ screen: 'Home' })
   }
 
-  const handleOnChange = e => {
-    setJoinFreq(e)
-  }
-
   const handleQRCode = e => {
     if (!QRCodeRead) {
-      console.log('[INFO] EnterFreq', e.data)
+      console.log('[INFO] ScanFreq', e.data)
       setQRCodeRead(true)
       saveNewFreq(e.data)
       setNav({ screen: 'JoinFreq' })
@@ -62,7 +43,7 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
   }
 
   const handleCamToggle = () => {
-    setIsScanning(!isScanning)
+    setNav({ screen: 'TypeFreq' })
   }
 
   const handleJoinRecent = () => {
@@ -72,7 +53,7 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
     }
   }
 
-  return isScanning ? (
+  return (
     <View style={styles.container}>
       <StatusBar barStyle={'light-content'} />
       <RNCamera
@@ -108,7 +89,7 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
                     <Text style={styles.closeText}>X</Text>
                   </TouchableOpacity>
                   <Text style={styles.instruction}>
-                    Scan QR code to join room
+                    Scan QR code to join baby room
                   </Text>
                 </View>
                 <View style={styles.middle}>
@@ -135,17 +116,6 @@ const EnterFreq = ({ setNav, setGame, saveNewFreq, room }) => {
         }
       </RNCamera>
     </View>
-  ) : (
-    <ScreenContainer>
-      <View style={styles.buttonCont}>
-        <Button primary text="Scan Frequency" onPress={handleCamToggle} />
-      </View>
-
-      <View style={styles.inputCont}>
-        <Input placeholder="Entre Room ID" onChange={handleOnChange} />
-        <Button secondary text="Join Frequency" onPress={handleJoinFreq} />
-      </View>
-    </ScreenContainer>
   )
 }
 
@@ -235,4 +205,4 @@ const styles = {
   },
 }
 
-export default EnterFreq
+export default ScanFreq

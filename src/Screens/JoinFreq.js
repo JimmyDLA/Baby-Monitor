@@ -7,14 +7,14 @@ import {
   RTCView,
   mediaDevices,
 } from 'react-native-webrtc'
-import crashlytics from '@react-native-firebase/crashlytics'
+// import crashlytics from '@react-native-firebase/crashlytics'
 import Config from 'react-native-config'
 import InCallManager from 'react-native-incall-manager'
 import { StatusBar, View, Text, Animated, Alert } from 'react-native'
-import cameraOffIcon from '../../assets/images/Camera_off_icon.png'
-import cameraOnIcon from '../../assets/images/Camera_on_icon.png'
-import endIcon from '../../assets/images/End_call_icon.png'
-import switchCam from '../../assets/images/Switch_cam_icon.png'
+import cameraOffIcon from '../../assets/images/camera_off_icon.png'
+import cameraOnIcon from '../../assets/images/camera_on_icon.png'
+import endIcon from '../../assets/images/end_call_icon.png'
+import switchCam from '../../assets/images/switch_cam_icon.png'
 import { Font, FontFam, Color, Size } from '@/Theme/Theme'
 import { Button, ScreenContainer } from '../Components'
 
@@ -96,7 +96,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
           ],
         )
         const err = new Error('Connection Timed-out - join freq')
-        crashlytics().recordError(err, 'Connection Timed-out - join freq')
+        // crashlytics().recordError(err, 'Connection Timed-out - join freq')
       }
     }, 10000)
     // ====================== 1. Emit joining roomID to server ======================
@@ -161,7 +161,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
     } catch (err) {
       // Handle Error
       console.log({ err })
-      crashlytics().recordError(err, 'getMedia - join freq')
+      // crashlytics().recordError(err, 'getMedia - join freq')
     }
   }
 

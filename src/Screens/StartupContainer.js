@@ -4,7 +4,7 @@ import { useTheme } from '@/Hooks'
 import { setDefaultTheme } from '@/Store/Theme'
 import { navigate } from '@/Navigators/utils'
 import { Size } from '../Theme/Theme'
-import launchScreen from '../../assets/images/Launch_screen.png'
+import launchScreen from '../../assets/images/launch_screen.png'
 
 const StartupContainer = () => {
   const { Layout } = useTheme()

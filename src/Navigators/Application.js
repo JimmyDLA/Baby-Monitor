@@ -2,14 +2,15 @@ import React from 'react'
 import { StatusBar } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
-import analytics from '@react-native-firebase/analytics'
+// import analytics from '@react-native-firebase/analytics'
 
 import {
   StartupContainer,
   CreateFreq,
   JoinFreq,
-  EnterFreq,
   Home,
+  ScanFreq,
+  TypeFreq,
 } from '../Screens'
 import { useTheme } from '@/Hooks'
 import { navigationRef } from './utils'
@@ -48,8 +49,15 @@ const ApplicationNavigator = () => {
           }}
         />
         <Stack.Screen
-          name="EnterFreq"
-          component={EnterFreq}
+          name="ScanFreq"
+          component={ScanFreq}
+          options={{
+            animationEnabled: true,
+          }}
+        />
+        <Stack.Screen
+          name="TypeFreq"
+          component={TypeFreq}
           options={{
             animationEnabled: true,
           }}

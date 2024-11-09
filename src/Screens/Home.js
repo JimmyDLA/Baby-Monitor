@@ -2,9 +2,9 @@ import React, { useRef, useState, useEffect } from 'react'
 import { Animated, Text, View, Image } from 'react-native'
 import { Button, ScreenContainer } from '../Components'
 import { Font, FontFam, Size } from '@/Theme/Theme'
-import logo from '../../assets/images/Logo_Name.png'
-import launchScreen from '../../assets/images/Launch_screen.png'
-import crashlytics from '@react-native-firebase/crashlytics'
+import logo from '../../assets/images/logo_name.png'
+import launchScreen from '../../assets/images/launch_screen.png'
+// import crashlytics from '@react-native-firebase/crashlytics'
 import analytics from '@react-native-firebase/analytics'
 import {
   getUniqueId,
@@ -33,10 +33,10 @@ const Home = ({ setNav, setGame }) => {
         crashObj = { ...tempObj }
       }
       console.warn(`${JSON.stringify(crashObj)}`)
-      crashlytics().log(`${JSON.stringify(crashObj)}`)
+      // crashlytics().log(`${JSON.stringify(crashObj)}`)
     }
 
-    logInitialAnalytics()
+    // logInitialAnalytics()
   }, [])
 
   const handleCreateFreq = () => {
@@ -46,11 +46,11 @@ const Home = ({ setNav, setGame }) => {
   const handleJoinFreq = async () => {
     try {
       // throw 'error'
-      setNav({ screen: 'EnterFreq' })
+      setNav({ screen: 'ScanFreq' })
     } catch (error) {
       console.warn(error)
       await analytics().logEvent('analy_join_freq_button')
-      crashlytics().recordError(error, 'crash_join_freq_button')
+      // crashlytics().recordError(error, 'crash_join_freq_button')
     }
   }
 
