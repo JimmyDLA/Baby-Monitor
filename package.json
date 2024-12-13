@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "type-check": "tsc",
     "nodemon": "cd server/ nodemon server.js",
-    "clean-android": "cd android &&./gradlew clean"
+    "clean-android": "cd android &&./gradlew clean",
+    "update-ip": "./update_ip_config.sh"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.7",

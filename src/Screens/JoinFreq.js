@@ -98,7 +98,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
         const err = new Error('Connection Timed-out - join freq')
         // crashlytics().recordError(err, 'Connection Timed-out - join freq')
       }
-    }, 10000)
+    }, 20000)
     // ====================== 1. Emit joining roomID to server ======================
 
     socketRef.current.emit('join-freq', { parent, room })
@@ -196,6 +196,10 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
       )
       if (peerRef.current.connectionState === 'disconnected') {
         setIsDisconnect(true)
+      }
+
+      if (peerRef.current.connectionState === 'connected') {
+        setIsDisconnect(false)
       }
 
       if (peerRef.current.connectionState === 'failed') {
@@ -355,8 +359,19 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
   }
 
   function emitEnd() {
-    socketRef.current.emit('end', room)
-    handleEnd()
+    Alert.alert('Exit?', 'Are you sure you want to leave?', [
+      { text: "Don't leave", style: 'cancel', onPress: () => { } },
+      {
+        text: 'Leave',
+        style: 'destructive',
+        // If the user confirmed, then we dispatch the action we blocked earlier
+        // This will continue the action that had triggered the removal of the screen
+        onPress: () => {
+          socketRef.current.emit('end', room)
+          handleEnd()
+        },
+      },
+    ])
   }
 
   function handleNewICECandidateMsg(incoming) {

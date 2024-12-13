@@ -18,6 +18,7 @@ import { Button, ScreenContainer } from '../Components'
 import { Font, FontFam, Color } from '@/Theme/Theme'
 
 const URL = Config.SERVER
+console.warn('SERVER @ ', URL)
 
 const mediaConstraints = {
   // don't know if noise suppression actually work as is
