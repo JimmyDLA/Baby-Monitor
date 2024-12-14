@@ -7,7 +7,7 @@ import {
   RTCView,
   mediaDevices,
 } from 'react-native-webrtc'
-// import crashlytics from '@react-native-firebase/crashlytics'
+import crashlytics from '@react-native-firebase/crashlytics'
 import Config from 'react-native-config'
 import InCallManager from 'react-native-incall-manager'
 import { StatusBar, View, Text, Animated, Alert } from 'react-native'
@@ -96,7 +96,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
           ],
         )
         const err = new Error('Connection Timed-out - join freq')
-        // crashlytics().recordError(err, 'Connection Timed-out - join freq')
+        crashlytics().recordError(err, 'Connection Timed-out - join freq')
       }
     }, 20000)
     // ====================== 1. Emit joining roomID to server ======================
@@ -161,7 +161,7 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
     } catch (err) {
       // Handle Error
       console.log({ err })
-      // crashlytics().recordError(err, 'getMedia - join freq')
+      crashlytics().recordError(err, 'getMedia - join freq')
     }
   }
 
@@ -256,7 +256,10 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
         // ====================== 10. Emit offer to Server ======================
         socketRef.current.emit('offer', payload)
       })
-      .catch(err => console.log('Error handling negotiation needed event', err))
+      .catch(err => {
+        crashlytics().log(`${JSON.stringify(err)}`)
+        console.log('Error handling negotiation needed event', err)
+      })
   }
 
   function handleOffer(incoming) {
@@ -318,7 +321,10 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
 
     // eslint-disable-next-line prettier/prettier
     peerRef.current.setRemoteDescription(desc)
-      .catch(e => console.log('Error handle answer', e))
+      .catch(e => {
+        crashlytics().log(`${JSON.stringify(e)}`)
+        console.log('Error handle answer', e)
+    })
   }
 
   function handleReceiveMessage(e) {
@@ -381,7 +387,10 @@ const JoinFreq = ({ room, setNav, saveNewFreq }) => {
 
     peerRef.current
       .addIceCandidate(candidate)
-      .catch(e => console.log('[ERR] JoinFreq handleNewICECandidateMsg', e))
+      .catch(e => {
+        crashlytics().log(`${JSON.stringify(e)}`)
+        console.log('[ERR] JoinFreq handleNewICECandidateMsg', e)
+      })
   }
 
   function handleTrackEvnet(e) {

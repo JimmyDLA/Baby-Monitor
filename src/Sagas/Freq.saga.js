@@ -1,7 +1,7 @@
 import { call as calling, put, takeEvery } from 'redux-saga/effects'
 import { saveNewFreq, SET_NAV, START_NEW_FREQ } from '../Reducers/frequency'
 import { navigate } from '../Navigators/utils'
-// import crashlytics from '@react-native-firebase/crashlytics'
+import crashlytics from '@react-native-firebase/crashlytics'
 
 
 /**
@@ -19,7 +19,7 @@ export function* doSetNav(action) {
     navigate(screen)
   } catch (error) {
     console.warn(error)
-    // crashlytics().recordError(error, 'SET_NAV')
+    crashlytics().log('SET_NAV')
   }
 }
 

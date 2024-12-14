@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Alert, View, Text } from 'react-native'
-// import crashlytics from '@react-native-firebase/crashlytics'
+import crashlytics from '@react-native-firebase/crashlytics'
 import {
   RTCPeerConnection,
   RTCSessionDescription,
@@ -121,7 +121,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     } catch (err) {
       // Handle Error
       console.log({ err })
-      // crashlytics().recordError(err, 'getMedia - create freq')
+      crashlytics().log(`${JSON.stringify(err)}`)
     }
   }
 
@@ -199,7 +199,10 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
         console.log('[INFO] createFreq handleNegotiationNeededEvent')
         socketRef.current.emit('offer', payload)
       })
-      .catch(err => console.log('Error handling negotiation needed event', err))
+      .catch(err => {
+        crashlytics().log(`${JSON.stringify(err)}`)
+        console.log('Error handling negotiation needed event', err)
+      })
   }
 
   async function handleOffer(incoming) {
@@ -254,16 +257,20 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
         // ====================== 16. Emit answer payload to server ======================
         socketRef.current.emit('answer', payload)
       })
-      .catch(e => console.log('[ERROR] ', e))
+      .catch(e => {
+        crashlytics().log(`${JSON.stringify(e)}`)
+        console.log('[ERROR] ', e)
+      })
   }
 
   function handleAnswer(message) {
     // Handle answer by the receiving peer
     console.log('[INFO] createFreq Handling Answer', message)
     const desc = new RTCSessionDescription(message.sdp)
-    peerRef.current
-      .setRemoteDescription(desc)
-      .catch(e => console.log('Error handle answer', e))
+    peerRef.current.setRemoteDescription(desc).catch(e => {
+      crashlytics().log(`${JSON.stringify(e)}`)
+      console.log('Error handle answer', e)
+    })
   }
 
   function handleReceiveMessage(e) {
@@ -330,7 +337,7 @@ const CreateFreq = ({ setNav, startNewFrequency }) => {
     } catch (err) {
       // Handle Error
       console.log('[ERR] createFreq handleSwitch error')
-      // crashlytics().recordError(err, 'handleSwitch - create freq')
+      crashlytics().log('handleSwitch - create freq')
     }
     console.log('[INFO] createFreq', { cameraCount })
 

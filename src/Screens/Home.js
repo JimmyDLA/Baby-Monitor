@@ -1,43 +1,48 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState } from 'react'
 import { Animated, Text, View, Image } from 'react-native'
 import { Button, ScreenContainer } from '../Components'
 import { Font, FontFam, Size } from '@/Theme/Theme'
 import logo from '../../assets/images/logo_name.png'
 import launchScreen from '../../assets/images/launch_screen.png'
-// import crashlytics from '@react-native-firebase/crashlytics'
+import firebase from '@react-native-firebase/app'
 import analytics from '@react-native-firebase/analytics'
-import {
-  getUniqueId,
-  getCarrier,
-  getBatteryLevel,
-  getDeviceType,
-  isEmulator,
-} from 'react-native-device-info'
+// import {
+//   getUniqueId,
+//   getCarrier,
+//   getBatteryLevel,
+//   getDeviceType,
+//   isEmulator,
+// } from 'react-native-device-info'
 
 const Home = ({ setNav, setGame }) => {
   const [isVisible, setIsVisible] = useState(true)
+  console.log(
+    firebase.apps.length > 0
+      ? 'Firebase Initialized'
+      : 'Firebase Not Initialized',
+  )
 
-  useEffect(() => {
-    async function logInitialAnalytics() {
-      const isSumlator = await isEmulator()
-      const deviceId = await getUniqueId()
-      const deviceType = getDeviceType()
-      const idInst = await analytics().getAppInstanceId()
-      let crashObj = { idInst, isSumlator, deviceId, deviceType }
-      await analytics().logEvent('home_page')
+  // useEffect(() => {
+  //   async function logInitialAnalytics() {
+  //     const isSumlator = await isEmulator()
+  //     const deviceId = await getUniqueId()
+  //     const deviceType = getDeviceType()
+  //     const idInst = await analytics().getAppInstanceId()
+  //     let crashObj = { idInst, isSumlator, deviceId, deviceType }
+  //     await analytics().logEvent('home_page')
 
-      if (!isSumlator) {
-        const battery = await getBatteryLevel()
-        const carrier = await getCarrier()
-        const tempObj = { battery, carrier }
-        crashObj = { ...tempObj }
-      }
-      console.warn(`${JSON.stringify(crashObj)}`)
-      // crashlytics().log(`${JSON.stringify(crashObj)}`)
-    }
+  //     if (!isSumlator) {
+  //       const battery = await getBatteryLevel()
+  //       const carrier = await getCarrier()
+  //       const tempObj = { battery, carrier }
+  //       crashObj = { ...tempObj }
+  //     }
+  //     console.warn(`${JSON.stringify(crashObj)}`)
+  //     crashlytics().log(`${JSON.stringify(crashObj)}`)
+  //   }
 
-    // logInitialAnalytics()
-  }, [])
+  //   logInitialAnalytics()
+  // }, [])
 
   const handleCreateFreq = () => {
     setGame(true)
