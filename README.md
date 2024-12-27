@@ -1,5 +1,6 @@
 <h1 align="center">
   Baby Monitor
+  
   <img 
     src="./assets/images/monitorLogo.png" 
     alt="alt text" 
