@@ -1,9 +1,16 @@
-# Baby Monitor
+<h1 align="center">
+  Baby Monitor
+  <img 
+    src="./assets/images/monitorLogo.png" 
+    alt="alt text" 
+    width="600" 
+    height="whatever"
+  />
+</h1>
 
 ## Description
 
 This is a mobile app that will allow you to monitor your baby from any where with any 2 device (phone, table, or laptop). This is all possible with the help of React Native and WebRTC.
-
 
 ## Authors
 
@@ -20,3 +27,4 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 Inspiration:
 
 - [awesome-readme](https://github.com/matiassingers/awesome-readme)
+- [WebRTC](https://webrtc.org/)
